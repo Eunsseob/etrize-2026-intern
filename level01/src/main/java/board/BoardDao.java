@@ -35,13 +35,32 @@ public class BoardDao {
 	}
 	
 	// 게시판 목록 가져오기
-	public ArrayList<Board> getBoardList(String boardType, int boardNum, String boardTitle) {
+	public ArrayList<Board> getBoardList(String boardType, int boardNum, String boardTitle, int start, int end) {
 		ArrayList<Board> alist = new ArrayList<>();	
 		try {
 			con = pool.getConnection();
-			String sql = "SELECT * FROM BOARD ORDER BY BOARD_NUM DESC"; 
+
+			// 조건 + 페이징 추가
+	        String sql = "SELECT * FROM BOARD ";
+	        
+	        // 필터링 조건 추가
+	        if(boardType != null && !boardType.equals("") && !boardType.equals("전체")) {
+	            sql += "WHERE BOARD_TYPE = ? ";
+	        }
+	        
+	        sql += "ORDER BY BOARD_NUM DESC LIMIT ?, ?";
+	        
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
+			
+			if(boardType != null && !boardType.equals("") && !boardType.equals("전체")) {
+	            pstmt.setString(1, boardType);
+	            pstmt.setInt(2, start);
+	            pstmt.setInt(3, end);
+	        } else {
+	            pstmt.setInt(1, start);
+	            pstmt.setInt(2, end);
+	        }
 			
 			while(rs.next()) {
 				Board bean = new Board();
