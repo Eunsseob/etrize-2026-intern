@@ -9,49 +9,43 @@
 </head>
 <script type="text/javascript">
 
-	$j(document).ready(function(){
+$j(document).ready(function(){
 	
-		// 체크박스
-		$j("input[name='codeName'][value='전체']").on("change", function(){
-		    $j("input[name='codeName']").prop("checked", $j(this).is(":checked"));
-		});
-		
-		// 개별 체크박스
-		$j("input[name='codeName']:not([value='전체'])").on("change", function(){
-		    var total = $j("input[name='codeName']:not([value='전체'])").length;
-		    var checked = $j("input[name='codeName']:not([value='전체']):checked").length;
-		    $j("input[name='codeName'][value='전체']").prop("checked", total === checked);
-		});
-	
+	// 전체 체크박스 이벤트
+	$j("input[name='codeId'][value='전체']").on("change", function(){
+	    $j("input[name='codeId']").prop("checked", $j(this).is(":checked"));
 	});
 	
-	function boardFilter() {
-	    var checked = [];
-	    $j("input[name='codeName']:not([value='전체']):checked").each(function(){
-	        checked.push($j(this).val());
-	    });
+	// 개별 체크박스 이벤트
+	$j("input[name='codeId']:not([value='전체'])").on("change", function(){
+	    var total = $j("input[name='codeId']:not([value='전체'])").length;
+	    var checked = $j("input[name='codeId']:not([value='전체']):checked").length;
+	    $j("input[name='codeId'][value='전체']").prop("checked", total === checked);
+	});
 
-	    var typeMap = {
-	        "일반" : "a01",
-	        "Q&A"  : "a02",
-	        "익명" : "a03",
-	        "자유" : "a04"
-	    };
+});
 
-	    // 전체 체크거나 아무것도 없으면 전체조회
-	    if(checked.length === 0 || $j("input[name='codeName'][value='전체']").is(":checked")) {
-	        location.href = "/board/boardList.do?pageNo=1";
-	        return;
-	    }
+function boardFilter() {
+    var checked = [];
+    // 이제 value에 '일반' 같은 이름 대신 'a01' 같은 코드ID가 직접 들어있으므로 바로 수집합니다.
+    $j("input[name='codeId']:not([value='전체']):checked").each(function(){
+        checked.push($j(this).val());
+    });
 
-	 // 여러개 선택시 boardType=a01&boardType=a02 형태로 넘김
-	    var params = "pageNo=1";
-	    $j.each(checked, function(i, val){
-	        params += "&boardType=" + typeMap[val];
-	    });
+    // 전체 체크거나 아무것도 체크되지 않았으면 전체조회
+    if(checked.length === 0 || $j("input[name='codeId'][value='전체']").is(":checked")) {
+        location.href = "/board/boardList.do?pageNo=1";
+        return;
+    }
 
-	    location.href = "/board/boardList.do?" + params;
-	}
+    // 여러 개 선택 시 boardType=a01&boardType=a02 형태로 파라미터 빌드
+    var params = "pageNo=1";
+    $j.each(checked, function(i, val){
+        params += "&boardType=" + val;
+    });
+
+    location.href = "/board/boardList.do?" + params;
+}
 
 </script>
 <body>
@@ -123,12 +117,11 @@
 	</tr>
 	<tr>
 	<td colspan="2" algin="left">
-	<input type="checkbox" name="codeName" value="전체">전체&nbsp;
-	<input type="checkbox" name="codeName" value="일반">일반&nbsp;
-	<input type="checkbox" name="codeName" value="Q&A">Q&A&nbsp;
-	<input type="checkbox" name="codeName" value="익명">익명&nbsp;
-	<input type="checkbox" name="codeName" value="자유">자유&nbsp;
-	<input type="button" name="joi" value="조회" onclick="boardFilter()">
+	<input type="checkbox" name="codeId" value="전체">전체&nbsp;
+			<c:forEach items="${codeList}" var="code">
+				<input type="checkbox" name="codeId" value="${code.codeId}">${code.codeName}&nbsp;
+			</c:forEach>
+			<input type="button" name="joi" value="조회" onclick="boardFilter()">
 	</td>
 	
 </table>	

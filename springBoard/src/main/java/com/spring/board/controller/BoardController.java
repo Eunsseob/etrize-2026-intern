@@ -23,8 +23,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
+import com.spring.code.service.codeService;
 import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
+import com.spring.code.vo.CodeVo;
 import com.spring.common.CommonUtil;
 
 @Controller
@@ -32,6 +34,9 @@ public class BoardController {
 	
 	@Autowired 
 	boardService boardService;
+	
+	@Autowired 
+    codeService codeService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -43,6 +48,7 @@ public class BoardController {
 		System.out.println("boardTypeList : " + boardTypeList);
 		
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
+		List<CodeVo> codeList = codeService.selectCodeList();
 		
 		int page = 1;
 		int totalCnt = 0;
@@ -59,6 +65,7 @@ public class BoardController {
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", totalCnt);
 		model.addAttribute("pageNo", page);
+		model.addAttribute("codeList", codeList);
 		
 		return "board/boardList";
 	}
@@ -82,21 +89,23 @@ public class BoardController {
 	
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
 	public String boardWrite(Locale locale, Model model) throws Exception{
-		
+		// 1. 드롭다운에 뿌릴 코드 목록 조회해서 model에 담기
+        List<CodeVo> codeList = codeService.selectCodeList();
+        model.addAttribute("codeList", codeList);        
 		return "board/boardWrite";
 	}
 	
-	@RequestMapping(value = "/uesr/userLogin.do", method = RequestMethod.GET)
-	public String userLogin(Locale locale, Model model) throws Exception{
-		
-		return "user/userLogin";
-	}
-	
-	@RequestMapping(value = "/uesr/userSignup.do", method = RequestMethod.GET)
-	public String userSignup(Locale locale, Model model) throws Exception{
-		
-		return "user/userSignup";
-	}
+//	@RequestMapping(value = "/user/userLogin.do", method = RequestMethod.GET)
+//	public String userLogin(Locale locale, Model model) throws Exception{
+//		
+//		return "user/userLogin";
+//	}
+//	
+//	@RequestMapping(value = "/user/userSignup.do", method = RequestMethod.GET)
+//	public String userSignup(Locale locale, Model model) throws Exception{
+//		
+//		return "user/userSignup";
+//	}
 	
 	// 보드에 삽입하는 함수입니다.
 	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)

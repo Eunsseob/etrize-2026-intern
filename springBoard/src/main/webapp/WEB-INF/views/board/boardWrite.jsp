@@ -57,6 +57,12 @@
 						</td>
 						<td width="400">
 						<select name="boardType">
+						    <c:forEach items="${codeList}" var="code">
+						         <option value="${code.codeId}">${code.codeName}</option>
+						    </c:forEach>
+						</select>
+						
+						<%-- <select name="boardType">
 							<!-- // 벨류값을 어떻게 하면 가져올 수 있는지 생각 + 해당 값들은
 								일반 = a01, Q&A = a02, 익명 = a03, 자유 = a04 << 로 채워질 예정
 								먼저 받아올려면 함수 구현
@@ -66,7 +72,7 @@
 						    <option value="a03" ${board.boardType == 'a03' ? 'selected' : ''}>익명</option>
 						    <option value="a04" ${board.boardType == 'a04' ? 'selected' : ''}>자유</option>
 				
-							</select>
+						</select> --%>
 						</td>
 					</tr>
 					<tr>
