@@ -37,10 +37,14 @@ public class CodeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
+	// 인터넷 브라우저에 매핑해주는 문문
 	@RequestMapping(value = "/code/codeList.do", method = RequestMethod.GET)
 	public String boardWrite(Model model) throws Exception {
 	    List<CodeVo> codeList = codeService.selectCodeList();
+	    // codeList << jsp 화면단에서 이름 불러 데이터 호출 가능
 	    model.addAttribute("codeList", codeList);
+	    
+	    // 최종 목적지로 가라
 	    return "board/boardWrite";
 	}
 }

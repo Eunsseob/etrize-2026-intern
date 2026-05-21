@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -50,6 +51,12 @@ public class BoardController {
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
 		List<CodeVo> codeList = codeService.selectCodeList();
 		
+		// 코드 값과 매칭 시키기 위함
+		Map<String, String> codeMap = new HashMap<>();
+	    for(CodeVo vo : codeList) {
+	        codeMap.put(vo.getCodeId(), vo.getCodeName());
+	    }
+	    
 		int page = 1;
 		int totalCnt = 0;
 		
@@ -66,6 +73,7 @@ public class BoardController {
 		model.addAttribute("totalCnt", totalCnt);
 		model.addAttribute("pageNo", page);
 		model.addAttribute("codeList", codeList);
+		model.addAttribute("codeMap", codeMap);
 		
 		return "board/boardList";
 	}
@@ -94,18 +102,6 @@ public class BoardController {
         model.addAttribute("codeList", codeList);        
 		return "board/boardWrite";
 	}
-	
-//	@RequestMapping(value = "/user/userLogin.do", method = RequestMethod.GET)
-//	public String userLogin(Locale locale, Model model) throws Exception{
-//		
-//		return "user/userLogin";
-//	}
-//	
-//	@RequestMapping(value = "/user/userSignup.do", method = RequestMethod.GET)
-//	public String userSignup(Locale locale, Model model) throws Exception{
-//		
-//		return "user/userSignup";
-//	}
 	
 	// 보드에 삽입하는 함수입니다.
 	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)

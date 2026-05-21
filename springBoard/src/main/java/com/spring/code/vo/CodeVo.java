@@ -3,8 +3,17 @@ package com.spring.code.vo;
 public class CodeVo {
 	private String codeId;
     private String codeName;
+    private String codeType;
     
-    public String getCodeId() { 
+    public String getCodeType() {
+		return codeType;
+	}
+
+	public void setCodeType(String codeType) {
+		this.codeType = codeType;
+	}
+
+	public String getCodeId() { 
     	return codeId; 
     }
     

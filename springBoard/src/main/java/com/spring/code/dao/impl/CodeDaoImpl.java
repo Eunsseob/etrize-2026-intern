@@ -9,15 +9,17 @@ import org.springframework.stereotype.Repository;
 import com.spring.code.dao.CodeDao;
 import com.spring.code.vo.CodeVo;
 
+// DB와 직접 소통하는 DAO
 @Repository
 public class CodeDaoImpl implements CodeDao{
 
+	// 자동으로 주입해줘
 	@Autowired
 	private SqlSession sqlSession;
 	
 	@Override
 	public List<CodeVo> selectCodeList() throws Exception {
-		// selectList를 써야 데이터가 여러 개(일반, Q&A 등) 담긴 리스트로 넘어옵니다.
+		// sql 만들었던 값들 가져옴 but 여러줄 나오기 때문에 selectList 사용
 		return sqlSession.selectList("code.selectCodeList");
 	}
 }

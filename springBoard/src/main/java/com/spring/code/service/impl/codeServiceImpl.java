@@ -23,7 +23,7 @@ public class codeServiceImpl implements codeService{
 	@Override
 	public List<CodeVo> selectCodeList() throws Exception {
 			
-		// 대소문자나 파라미터 넣을 필요 없이, DAO에게 목록을 통째로 달라고 요청합니다.
+		//DAO에게 목록을 통째로 달라고 요청
 		return codeDao.selectCodeList();
 	}
 }

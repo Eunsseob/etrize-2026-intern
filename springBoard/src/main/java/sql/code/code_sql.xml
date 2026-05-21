@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="code">
-<resultMap type="com.spring.code.vo.CodeVo" id="codeVo">
+	<!-- 결과 매핑 지도 역할-->
+	<!-- 내가 가져올 값만 적어두면 쉬움 -->
+	<resultMap type="com.spring.code.vo.CodeVo" id="codeVo">
     	<result property="codeId" 	column="CODE_ID"/>
-    	<result property="codeType" 	column="CODE_TYPE"/>
     	<result property="codeName" 	column="CODE_NAME"/>
     </resultMap>
     
-    <!-- 코드 선택 리스트 받아오는 쿼리-->
+    <!-- 코드 선택 리스트 받아오는 쿼리 1단계임. -->
+	<!--     
+	1. id = Daoimpl 에서 code.selectCodeList 호출할때의 목적지
+    2. resultType -> 실행할 때 리스트 담긴 CodeVo을 재료로 받으며,
+    	결과물로 위에 만든 양식대로
+    3. resultMap 위에서 맞추어서 반환해라 이뜻 
+    ** 2개 가져오는 이유 -> 값으로 묶기 위해서
+    -->
 	<select id="selectCodeList" resultType="com.spring.code.vo.CodeVo" resultMap="codeVo">
    		SELECT 
    			CODE_ID, CODE_NAME 

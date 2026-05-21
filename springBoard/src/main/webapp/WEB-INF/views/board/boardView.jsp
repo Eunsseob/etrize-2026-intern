@@ -73,7 +73,7 @@
 	<tr>
 		<td align="right">
 			<a href="/board/boardList.do">List</a>&emsp;
-			<a href="/board/${board.boardType}/${board.boardNum}/boardUpdate.do">업데이트</a>&emsp;
+			<a href="/board/${board.boardType}/${board.boardNum}/boardUpdate.do">업데이트</a>
 			<form action="/board/boardDeleteAction.do" method="post" class="boardDelete">
 				<input type="hidden" name="boardNum" value="${board.boardNum}">
 		        <input type="hidden" name="boardType" value="${board.boardType}">
