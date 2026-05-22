@@ -29,10 +29,12 @@ public class boardServiceImpl implements boardService{
 		return boardDao.selectBoardList(pageVo);
 	}
 	
+	// 토탈 갯수를 전달받기 위해 맵으로 받아오기.
+	// pageVo에 있는 "보드 타입" -> 반환으로 보드의 갯수 주는 방법
 	@Override
-	public int selectBoardCnt() throws Exception {
+	public int selectBoardCnt(PageVo pageVo) throws Exception {
 		// TODO Auto-generated method stub
-		return boardDao.selectBoardCnt();
+		return boardDao.selectBoardCnt(pageVo);
 	}
 	
 	@Override

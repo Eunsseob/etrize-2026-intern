@@ -10,40 +10,48 @@
     </resultMap>
     
     <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
-    SELECT
-        BOARD_TYPE
-        ,BOARD_NUM
-        ,BOARD_TITLE
-        ,BOARD_COMMENT
-        ,TOTAL_CNT
-    FROM
-    (
-        SELECT
-            BOARD_TYPE
-            ,BOARD_NUM
-            ,BOARD_TITLE
-            ,BOARD_COMMENT
-            ,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-            ,COUNT(*) OVER() AS TOTAL_CNT
-        FROM
-            BOARD
-        <where>
-            <if test="boardTypeList != null and boardTypeList.size() > 0">
-                BOARD_TYPE IN
-                <foreach collection="boardTypeList" item="type" open="(" separator="," close=")">
-                    #{type}
-                </foreach>
-            </if>
-        </where>
-    )
-    WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
-</select>
+	    SELECT
+	        BOARD_TYPE
+	        ,BOARD_NUM
+	        ,BOARD_TITLE
+	        ,BOARD_COMMENT
+	        ,TOTAL_CNT
+	    FROM
+	    (
+	        SELECT
+	            BOARD_TYPE
+	            ,BOARD_NUM
+	            ,BOARD_TITLE
+	            ,BOARD_COMMENT
+	            ,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+	            ,COUNT(*) OVER() AS TOTAL_CNT
+	        FROM
+	            BOARD
+	        <where>
+	            <if test="boardTypeList != null and boardTypeList.size() > 0">
+	                BOARD_TYPE IN
+	                <foreach collection="boardTypeList" item="type" open="(" separator="," close=")">
+	                    #{type}
+	                </foreach>
+	            </if>
+	        </where>
+	    )
+	    WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+	</select>
     
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
 		  SELECT
 		      	COUNT(*) AS TOTAL_CNT
 			FROM
-				BOARD	
+				BOARD
+			<where>
+	        <if test="boardTypeList != null and boardTypeList.size() > 0">
+	            BOARD_TYPE IN
+	            <foreach collection="boardTypeList" item="type" open="(" separator="," close=")">
+	                    #{type}
+	            </foreach>  
+	        </if>
+	        </where>	
     </select>
     	
     <select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">

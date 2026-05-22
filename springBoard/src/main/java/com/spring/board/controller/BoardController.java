@@ -67,7 +67,8 @@ public class BoardController {
 		pageVo.setBoardTypeList(boardTypeList);
 		
 		boardList = boardService.SelectBoardList(pageVo);
-		totalCnt = boardService.selectBoardCnt();
+		// 넘기는 이유 Cnt 동적 작용
+		totalCnt = boardService.selectBoardCnt(pageVo);
 		
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", totalCnt);

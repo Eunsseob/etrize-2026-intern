@@ -52,6 +52,7 @@
                             <td width="120" align="center">Type</td>
                             <td width="400">
                                 <select name="boardType">
+                                	<!-- 있는 값 가져오기 하드 코딩 방지 -->
                                     <c:forEach items="${codeList}" var="code">
                                         <option value="${code.codeId}">${code.codeName}</option>
                                     </c:forEach>
