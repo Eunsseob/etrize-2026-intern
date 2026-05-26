@@ -8,15 +8,7 @@ public class BoardVo {
 	private String 	boardComment;
 	private String 	creator;
 	private String	modifier;
-	private int totalCnt;
 	
-	
-	public int getTotalCnt() {
-		return totalCnt;
-	}
-	public void setTotalCnt(int totalCnt) {
-		this.totalCnt = totalCnt;
-	}
 	public int getBoardNum() {
 		return boardNum;
 	}

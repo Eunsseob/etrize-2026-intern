@@ -18,6 +18,8 @@
 	            });
 	            
 	            var isAllChecked = true;
+	            
+	            // 전체 체크안되면 다음페이지 못가게
 	            currentRows.each(function() {
 	                // 이 행 안에 선택된 라디오 버튼이 있는지 확인
 	                if ($j(this).find("input[type='radio']:checked").length === 0) {
@@ -36,6 +38,7 @@
 	
 	        if(step < 1 || step > totalSteps) return;
 	
+	        // 나머지 질문들은 안보이게 하는 메서드
 	        $j(".mbti-row").hide();
 	        var startIdx = (step - 1) * pageSize;
 	        var endIdx = startIdx + pageSize;
@@ -61,6 +64,7 @@
 	        }
 	    }
 	
+	    // 설문조사 1부터 스타트
 	    $j(document).ready(function() {
 	        if($j(".mbti-row").length > 0) {
 	            showStep(1);
@@ -79,7 +83,7 @@
             <form action="/board/mbtiResult.do" method="post" onsubmit="return validateForm()">
                 <table align="center">
 				    <c:forEach var="board" items="${boardList}" varStatus="status">
-				        <tbody class="mbti-row" style="display:none;">
+				        <tbody class="mbti-row">
 				            <tr>
 				                <td colspan="9"><h3><strong>${board.boardComment}</strong></h3></td>
 				            </tr>

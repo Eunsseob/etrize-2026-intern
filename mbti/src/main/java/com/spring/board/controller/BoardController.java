@@ -27,7 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
-import com.spring.board.vo.PageVo;
 import com.spring.common.CommonUtil;
 
 @Controller
@@ -37,128 +36,6 @@ public class BoardController {
 	boardService boardService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
-	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
-	public String boardList(Locale locale, Model model,PageVo pageVo,
-			@RequestParam(value = "boardType", required = false) List<String> boardTypeList) throws Exception{
-		
-		System.out.println("pageNo : " + pageVo.getPageNo());
-		System.out.println("boardTypeList : " + boardTypeList);
-		
-		List<BoardVo> boardList = new ArrayList<BoardVo>();
-		// 코드 값과 매칭 시키기 위함
-		Map<String, String> codeMap = new HashMap<>();
-	    
-	    
-		int page = 1;
-		int totalCnt = 0;
-		
-		if(pageVo.getPageNo() == 0){
-			pageVo.setPageNo(page);;
-		}
-		
-		pageVo.setBoardTypeList(boardTypeList);
-		
-		boardList = boardService.SelectBoardList(pageVo);
-		// 넘기는 이유 Cnt 동적 작용
-		totalCnt = boardService.selectBoardCnt(pageVo);
-		
-		model.addAttribute("boardList", boardList);
-		model.addAttribute("totalCnt", totalCnt);
-		model.addAttribute("pageNo", page);
-		model.addAttribute("codeMap", codeMap);
-		
-		return "board/boardList";
-	}
-	
-	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
-	public String boardView(Locale locale, Model model
-			,@PathVariable("boardType")String boardType
-			,@PathVariable("boardNum")int boardNum) throws Exception{
-		
-		BoardVo boardVo = new BoardVo();
-		
-		
-		boardVo = boardService.selectBoard(boardType,boardNum);
-		
-		model.addAttribute("boardType", boardType);
-		model.addAttribute("boardNum", boardNum);
-		model.addAttribute("board", boardVo);
-		
-		return "board/boardView";
-	}
-	
-	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
-	public String boardWrite(Locale locale, Model model) throws Exception{
-		// 1. 드롭다운에 뿌릴 코드 목록 조회해서 model에 담기   
-		return "board/boardWrite";
-	}
-	
-	// 보드에 삽입하는 함수입니다.
-	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String boardWriteAction(Locale locale,BoardVo boardVo) throws Exception{
-		System.out.println("boardType: " + boardVo.getBoardType()); 
-		System.out.println("boardName: " + boardVo.getBoardTitle()); 
-		System.out.println("boardComment: " + boardVo.getBoardComment()); 
-		
-		HashMap<String, String> result = new HashMap<String, String>();
-		CommonUtil commonUtil = new CommonUtil();
-		
-		int resultCnt = boardService.boardInsert(boardVo);
-		
-		result.put("success", (resultCnt > 0)?"Y":"N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
-		
-		System.out.println("callbackMsg::"+callbackMsg);
-		
-		return callbackMsg;
-	}
-	
-	// 수정메소드
-	// 수정 폼
-	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardUpdate.do", method = RequestMethod.GET)
-	public String boardEditForm(Locale locale, Model model,
-	                            @PathVariable String boardType, 
-	                            @PathVariable int boardNum  
-	) throws Exception {
-
-	    BoardVo boardVo = boardService.selectBoard(boardType, boardNum);
-
-	    model.addAttribute("boardType", boardType);
-	    model.addAttribute("boardNum", boardNum);
-	    model.addAttribute("board", boardVo);
-
-	    return "board/boardUpdate"; 
-	}
-
-	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardUpdate.do", method = RequestMethod.POST)
-	public String boardUpdate(@ModelAttribute BoardVo boardVo) throws Exception {
-
-	    boardService.boardUpdate(boardVo);
-
-	    return "redirect:/board/boardList.do"; 
-	}
-	
-	
-	// 삭제하는 메소드 2
-	@RequestMapping(value = "/board/boardDeleteAction.do", method = RequestMethod.POST)
-	@ResponseBody // 움직이지 않는 메소드
-	public String boardDelete(@ModelAttribute BoardVo boardVo) throws Exception {
-		// HashMap 형태로 던져줍니다.
-		HashMap<String, String> result = new HashMap<String, String>();
-		CommonUtil commonUtil = new CommonUtil();
-		    
-//		// 쿼리 하나 사용
-		int resultCnt = boardService.boardDelete(boardVo);
-		
-		result.put("success", (resultCnt > 0) ? "Y" : "N");
-	    String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-	    
-	    System.out.println("callbackMsg::" + callbackMsg);
-	    
-	    return callbackMsg;
-	}
 	
 	@RequestMapping(value = "/board/mbti.do", method = RequestMethod.GET)
     public String mbtiMain(Locale locale, Model model) throws Exception {
@@ -172,106 +49,61 @@ public class BoardController {
         return "board/mbtiResult";
     }
 
-    // ② 결과 계산
     @RequestMapping(value = "/board/mbtiResult.do", method = RequestMethod.POST)
     public String mbtiResult(HttpServletRequest request, Model model) throws Exception {
 
         List<BoardVo> boardList = boardService.boardMbtiList();
 
-        int eScore = 0, iScore = 0;
-        int sScore = 0, nScore = 0;
-        int fScore = 0, tScore = 0;
-        int jScore = 0, pScore = 0;
+        // 1번 점수 저장용 Map (E, I, S, N, F, T, J, P)
+        Map<String, Integer> scores = new HashMap<>();
+        
+        // 0점으로 초기화
+        String[] allTypes = {"E", "I", "S", "N", "F", "T", "J", "P"};
+        for (String t : allTypes) scores.put(t, 0);
 
-        // 첫 번째 문항 동점 처리용
-        String firstEiType = null;
-        int firstEiScore = 0;
-
+        // 2번 규칙 정의 (타입 8개가 있으니, 8개로 나누는 형식)
+        Map<String, String[]> rules = new HashMap<>();
+        
+        // 룰에있는것을 가져와, 해당 스트링 값에 있는 것에 점수를 부여하겠다.
+        rules.put("EI", new String[]{"E", "I"}); rules.put("IE", new String[]{"I", "E"});
+        rules.put("SN", new String[]{"S", "N"}); rules.put("NS", new String[]{"N", "S"});
+        rules.put("FT", new String[]{"F", "T"}); rules.put("TF", new String[]{"T", "F"});
+        rules.put("JP", new String[]{"J", "P"}); rules.put("PJ", new String[]{"P", "J"});
+        
         for (BoardVo board : boardList) {
             String param = request.getParameter("q_" + board.getBoardNum());
             if (param == null) continue;
 
-            int value = Integer.parseInt(param);
+            int score = 4 - Integer.parseInt(param);
             String type = board.getBoardType();
+            String[] rule = rules.get(type);
 
-            // value 1~7 → -3 ~ +3 변환 (4=중간=0)
-            int score = 4 - value;
-
-            // EI 계열
-            if ("EI".equals(type)) {
-                // 동의쪽(+)=E, 비동의쪽(-)=I
-                if (score > 0) eScore += score;
-                else if (score < 0) iScore += (-score);
-
-                if (firstEiType == null) {
-                    firstEiType = "EI";
-                    firstEiScore = score;
-                }
-
-            } else if ("IE".equals(type)) {
-                // 동의쪽(+)=I, 비동의쪽(-)=E
-                if (score > 0) iScore += score;
-                else if (score < 0) eScore += (-score);
-
-                if (firstEiType == null) {
-                    firstEiType = "IE";
-                    firstEiScore = score;
-                }
-
-            // SN 계열
-            } else if ("SN".equals(type)) {
-                if (score > 0) sScore += score;
-                else if (score < 0) nScore += (-score);
-
-            } else if ("NS".equals(type)) {
-                if (score > 0) nScore += score;
-                else if (score < 0) sScore += (-score);
-
-            // FT 계열
-            } else if ("FT".equals(type)) {
-                if (score > 0) fScore += score;
-                else if (score < 0) tScore += (-score);
-
-            } else if ("TF".equals(type)) {
-                if (score > 0) tScore += score;
-                else if (score < 0) fScore += (-score);
-
-            // JP 계열
-            } else if ("JP".equals(type)) {
-                if (score > 0) jScore += score;
-                else if (score < 0) pScore += (-score);
-
-            } else if ("PJ".equals(type)) {
-                if (score > 0) pScore += score;
-                else if (score < 0) jScore += (-score);
+            if (score > 0) {
+                scores.put(rule[0], scores.get(rule[0]) + score);
+            } else if (score < 0) {
+            	// Math.abs << 절댓값
+                scores.put(rule[1], scores.get(rule[1]) + Math.abs(score));
             }
         }
 
-        // 유형 판별
-        String resultEi;
-        if (eScore > iScore)       resultEi = "E";
-        else if (iScore > eScore)  resultEi = "I";
-        else {
-            // 동점이면 첫 번째 문항 기준
-            if ("EI".equals(firstEiType)) resultEi = firstEiScore >= 0 ? "E" : "I";
-            else                          resultEi = firstEiScore >= 0 ? "I" : "E";
-        }
-
-        String resultSn = sScore >= nScore ? "S" : "N";
-        String resultFt = fScore >= tScore ? "F" : "T";
-        String resultJp = jScore >= pScore ? "J" : "P";
-
+        // 동점일 경우 사전순으로 빠른 쪽(E, S, F, J)이 선택
+        String resultEi = (scores.get("E") >= scores.get("I")) ? "E" : "I";
+        String resultSn = (scores.get("S") >= scores.get("N")) ? "S" : "N";
+        String resultFt = (scores.get("F") >= scores.get("T")) ? "F" : "T";
+        String resultJp = (scores.get("J") >= scores.get("P")) ? "J" : "P";
+        
         String mbtiResult = resultEi + resultSn + resultFt + resultJp;
 
+        // 5. 결과 전달
         model.addAttribute("mbtiResult", mbtiResult);
-        model.addAttribute("eScore", eScore);
-        model.addAttribute("iScore", iScore);
-        model.addAttribute("sScore", sScore);
-        model.addAttribute("nScore", nScore);
-        model.addAttribute("fScore", fScore);
-        model.addAttribute("tScore", tScore);
-        model.addAttribute("jScore", jScore);
-        model.addAttribute("pScore", pScore);
+        model.addAttribute("eScore", scores.get("E"));
+        model.addAttribute("iScore", scores.get("I"));
+        model.addAttribute("sScore", scores.get("S"));
+        model.addAttribute("nScore", scores.get("N"));
+        model.addAttribute("fScore", scores.get("F"));
+        model.addAttribute("tScore", scores.get("T"));
+        model.addAttribute("jScore", scores.get("J"));
+        model.addAttribute("pScore", scores.get("P"));
 
         return "board/mbtiResult";
     }

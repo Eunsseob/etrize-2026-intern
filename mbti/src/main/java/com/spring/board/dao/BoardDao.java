@@ -3,26 +3,9 @@ package com.spring.board.dao;
 import java.util.List;
 
 import com.spring.board.vo.BoardVo;
-import com.spring.board.vo.PageVo;
 
 public interface BoardDao {
 
-	public String selectTest() throws Exception;
-
-	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception;
-
-	public BoardVo selectBoard(BoardVo boardVo) throws Exception;
-
-	public int selectBoardCnt(PageVo pageVo) throws Exception;
-
-	public int boardInsert(BoardVo boardVo) throws Exception;
-
-	// 반환값 int -> int로 수정
-	public int boardUpdate(BoardVo boardVo) throws Exception;
-
-	// 삭제 메소드
-	public int boardDelete(BoardVo boardVo) throws Exception;
-	
-	// 보드를 찾아야지
+	// 리스트 형식으로 MBTI의 리스트를 찾아야지
 	public List<BoardVo> boardMbti() throws Exception;
 }
