@@ -24,5 +24,5 @@ public interface BoardDao {
 	public int boardDelete(BoardVo boardVo) throws Exception;
 	
 	// 보드를 찾아야지
-	public List<BoardVo> boardMbti(PageVo pageVo) throws Exception;
+	public List<BoardVo> boardMbti() throws Exception;
 }

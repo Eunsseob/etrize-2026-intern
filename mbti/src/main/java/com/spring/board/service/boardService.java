@@ -22,5 +22,5 @@ public interface boardService {
 	public int boardDelete(BoardVo boardVo) throws Exception;
 
 	// mbti 가져오기
-	public List<BoardVo> boardMbtiList(PageVo pageVo) throws Exception;
+	public List<BoardVo> boardMbtiList() throws Exception;
 }

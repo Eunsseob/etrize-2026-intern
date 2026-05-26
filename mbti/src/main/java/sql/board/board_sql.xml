@@ -115,4 +115,14 @@
 	    ORDER BY BOARD_NUM ASC
     </select>
 
+	<!-- mbti 리스트 가져오는 첫 단계 -->
+    <select id="boardMbti" resultMap="boardVo">
+	    SELECT BOARD_TYPE
+	         , BOARD_NUM
+	         , BOARD_COMMENT
+	    FROM BOARD
+	    WHERE BOARD_TYPE IN ('EI','IE','SN','NS','FT','TF','JP','PJ')
+	    ORDER BY BOARD_NUM
+	</select>
+	
 </mapper>

@@ -67,8 +67,8 @@ public class boardServiceImpl implements boardService{
 	}
 	
 	@Override
-	public List<BoardVo> boardMbtiList(PageVo pageVo) throws Exception {
+	public List<BoardVo> boardMbtiList() throws Exception {
 		// TODO Auto-generated method stub	
-		return boardDao.boardMbti(pageVo);
+		return boardDao.boardMbti();
 	}
 }

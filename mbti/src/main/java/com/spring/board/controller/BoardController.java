@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -24,10 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
-import com.spring.code.service.codeService;
 import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
-import com.spring.code.vo.CodeVo;
 import com.spring.common.CommonUtil;
 
 @Controller
@@ -35,9 +35,6 @@ public class BoardController {
 	
 	@Autowired 
 	boardService boardService;
-	
-	@Autowired 
-    codeService codeService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -49,13 +46,9 @@ public class BoardController {
 		System.out.println("boardTypeList : " + boardTypeList);
 		
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
-		List<CodeVo> codeList = codeService.selectCodeList();
-		
 		// 코드 값과 매칭 시키기 위함
 		Map<String, String> codeMap = new HashMap<>();
-	    for(CodeVo vo : codeList) {
-	        codeMap.put(vo.getCodeId(), vo.getCodeName());
-	    }
+	    
 	    
 		int page = 1;
 		int totalCnt = 0;
@@ -73,7 +66,6 @@ public class BoardController {
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", totalCnt);
 		model.addAttribute("pageNo", page);
-		model.addAttribute("codeList", codeList);
 		model.addAttribute("codeMap", codeMap);
 		
 		return "board/boardList";
@@ -98,9 +90,7 @@ public class BoardController {
 	
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
 	public String boardWrite(Locale locale, Model model) throws Exception{
-		// 1. 드롭다운에 뿌릴 코드 목록 조회해서 model에 담기
-        List<CodeVo> codeList = codeService.selectCodeList();
-        model.addAttribute("codeList", codeList);        
+		// 1. 드롭다운에 뿌릴 코드 목록 조회해서 model에 담기   
 		return "board/boardWrite";
 	}
 	
@@ -171,16 +161,118 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value = "/board/mbti.do", method = RequestMethod.GET)
-	public String mbti(Model model) throws Exception {
-	    String[] types = {"EI", "NS", "FT", "JP"};
-	    
-	    for (String type : types) {
-	        PageVo pageVo = new PageVo();
-	        pageVo.setMbtiType(type); // PageVo에 이 필드가 있어야 합니다.
-	        
-	        // 결과 예: model.addAttribute("eiList", ...)
-	        model.addAttribute(type.toLowerCase() + "List", boardService.boardMbtiList(pageVo));
-	    }
-	    return "board/mbti";
-	}
+    public String mbtiMain(Locale locale, Model model) throws Exception {
+        List<BoardVo> boardList = boardService.boardMbtiList();
+        model.addAttribute("boardList", boardList);
+        return "board/mbti";
+    }
+	
+	@RequestMapping(value = "/board/mbtiResult.do", method = RequestMethod.GET)
+    public String mbtiResult(Locale locale, Model model) throws Exception {
+        return "board/mbtiResult";
+    }
+
+    // ② 결과 계산
+    @RequestMapping(value = "/board/mbtiResult.do", method = RequestMethod.POST)
+    public String mbtiResult(HttpServletRequest request, Model model) throws Exception {
+
+        List<BoardVo> boardList = boardService.boardMbtiList();
+
+        int eScore = 0, iScore = 0;
+        int sScore = 0, nScore = 0;
+        int fScore = 0, tScore = 0;
+        int jScore = 0, pScore = 0;
+
+        // 첫 번째 문항 동점 처리용
+        String firstEiType = null;
+        int firstEiScore = 0;
+
+        for (BoardVo board : boardList) {
+            String param = request.getParameter("q_" + board.getBoardNum());
+            if (param == null) continue;
+
+            int value = Integer.parseInt(param);
+            String type = board.getBoardType();
+
+            // value 1~7 → -3 ~ +3 변환 (4=중간=0)
+            int score = 4 - value;
+
+            // EI 계열
+            if ("EI".equals(type)) {
+                // 동의쪽(+)=E, 비동의쪽(-)=I
+                if (score > 0) eScore += score;
+                else if (score < 0) iScore += (-score);
+
+                if (firstEiType == null) {
+                    firstEiType = "EI";
+                    firstEiScore = score;
+                }
+
+            } else if ("IE".equals(type)) {
+                // 동의쪽(+)=I, 비동의쪽(-)=E
+                if (score > 0) iScore += score;
+                else if (score < 0) eScore += (-score);
+
+                if (firstEiType == null) {
+                    firstEiType = "IE";
+                    firstEiScore = score;
+                }
+
+            // SN 계열
+            } else if ("SN".equals(type)) {
+                if (score > 0) sScore += score;
+                else if (score < 0) nScore += (-score);
+
+            } else if ("NS".equals(type)) {
+                if (score > 0) nScore += score;
+                else if (score < 0) sScore += (-score);
+
+            // FT 계열
+            } else if ("FT".equals(type)) {
+                if (score > 0) fScore += score;
+                else if (score < 0) tScore += (-score);
+
+            } else if ("TF".equals(type)) {
+                if (score > 0) tScore += score;
+                else if (score < 0) fScore += (-score);
+
+            // JP 계열
+            } else if ("JP".equals(type)) {
+                if (score > 0) jScore += score;
+                else if (score < 0) pScore += (-score);
+
+            } else if ("PJ".equals(type)) {
+                if (score > 0) pScore += score;
+                else if (score < 0) jScore += (-score);
+            }
+        }
+
+        // 유형 판별
+        String resultEi;
+        if (eScore > iScore)       resultEi = "E";
+        else if (iScore > eScore)  resultEi = "I";
+        else {
+            // 동점이면 첫 번째 문항 기준
+            if ("EI".equals(firstEiType)) resultEi = firstEiScore >= 0 ? "E" : "I";
+            else                          resultEi = firstEiScore >= 0 ? "I" : "E";
+        }
+
+        String resultSn = sScore >= nScore ? "S" : "N";
+        String resultFt = fScore >= tScore ? "F" : "T";
+        String resultJp = jScore >= pScore ? "J" : "P";
+
+        String mbtiResult = resultEi + resultSn + resultFt + resultJp;
+
+        model.addAttribute("mbtiResult", mbtiResult);
+        model.addAttribute("eScore", eScore);
+        model.addAttribute("iScore", iScore);
+        model.addAttribute("sScore", sScore);
+        model.addAttribute("nScore", nScore);
+        model.addAttribute("fScore", fScore);
+        model.addAttribute("tScore", tScore);
+        model.addAttribute("jScore", jScore);
+        model.addAttribute("pScore", pScore);
+
+        return "board/mbtiResult";
+    }
 }

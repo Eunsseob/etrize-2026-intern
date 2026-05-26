@@ -67,8 +67,8 @@ public class BoardDaoImpl implements BoardDao{
 	
 	// mbti 생성입니다.
 	@Override
-	public List<BoardVo> boardMbti(PageVo pageVo) throws Exception {
+	public List<BoardVo> boardMbti() throws Exception {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("board.selectBoardListByType", pageVo);
+		return sqlSession.selectList("board.boardMbti");
 	}
 }
