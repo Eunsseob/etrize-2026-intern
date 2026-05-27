@@ -80,7 +80,7 @@
             <p>등록된 테스트 문항이 없습니다.</p>
         </c:when>
         <c:otherwise>
-            <form action="/board/mbtiResult.do" method="post" onsubmit="return validateForm()">
+            <form action="/board/mbtiResult.do" method="post">
                 <table align="center">
 				    <c:forEach var="board" items="${boardList}" varStatus="status">
 				        <tbody class="mbti-row">

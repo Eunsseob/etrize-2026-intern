@@ -48,7 +48,21 @@ public class BoardController {
     public String mbtiResult(Locale locale, Model model) throws Exception {
         return "board/mbtiResult";
     }
+	
 
+	// 동점 방지 함수
+	private String dues(Map<String, Integer> scores, String a, String b) {
+		// 각각 항목별 점수를 가져와서
+		int k = scores.get(a) - scores.get(b);
+		System.out.println(k);
+		
+		if (k>0) return a;
+		else if (k<0) return b;
+		// 동점일때 a가 b보다 사전순으로 빠르냐 ex) a.compareTo(b) ==> -1 반환 why a가 더 빠르니깐.
+		else return 
+				a.compareTo(b) < 0 ? a:b;
+	}
+	
     @RequestMapping(value = "/board/mbtiResult.do", method = RequestMethod.POST)
     public String mbtiResult(HttpServletRequest request, Model model) throws Exception {
 
@@ -70,27 +84,33 @@ public class BoardController {
         rules.put("FT", new String[]{"F", "T"}); rules.put("TF", new String[]{"T", "F"});
         rules.put("JP", new String[]{"J", "P"}); rules.put("PJ", new String[]{"P", "J"});
         
+        
+        // 동의 로직이 보이게
         for (BoardVo board : boardList) {
             String param = request.getParameter("q_" + board.getBoardNum());
             if (param == null) continue;
 
-            int score = 4 - Integer.parseInt(param);
+            int score = Integer.parseInt(param);
             String type = board.getBoardType();
             String[] rule = rules.get(type);
 
-            if (score > 0) {
-                scores.put(rule[0], scores.get(rule[0]) + score);
-            } else if (score < 0) {
-            	// Math.abs << 절댓값
-                scores.put(rule[1], scores.get(rule[1]) + Math.abs(score));
+            switch (score) {
+	            case 7:  scores.put(rule[0], scores.get(rule[0]) + 3); break; // 매우 비동의 + 보드타입에 있는 맨 앞에있는 문자열 + 3
+	            case 6:  scores.put(rule[0], scores.get(rule[0]) + 2); break; // 비동의       
+	            case 5:  scores.put(rule[0], scores.get(rule[0]) + 1); break; // 약간 비동의 
+	            case 4: break;  
+	            case 3: scores.put(rule[1], scores.get(rule[1]) + 1); break; // 약간 동의
+	            case 2: scores.put(rule[1], scores.get(rule[1]) + 2); break; // 동의     
+	            case 1: scores.put(rule[1], scores.get(rule[1]) + 3); break; // 매우 동의 + 보드타입에 있는 맨 뒤에있는 문자열 +3
             }
         }
-
+        
+        // 사전순으로 바꾸기
         // 동점일 경우 사전순으로 빠른 쪽(E, S, F, J)이 선택
-        String resultEi = (scores.get("E") >= scores.get("I")) ? "E" : "I";
-        String resultSn = (scores.get("S") >= scores.get("N")) ? "S" : "N";
-        String resultFt = (scores.get("F") >= scores.get("T")) ? "F" : "T";
-        String resultJp = (scores.get("J") >= scores.get("P")) ? "J" : "P";
+        String resultEi = dues(scores, "E", "I"); 
+        String resultSn = dues(scores, "S", "N"); 
+        String resultFt = dues(scores, "F", "T");
+        String resultJp = dues(scores, "J", "P");
         
         String mbtiResult = resultEi + resultSn + resultFt + resultJp;
 

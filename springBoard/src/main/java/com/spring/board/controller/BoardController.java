@@ -86,7 +86,6 @@ public class BoardController {
 		
 		BoardVo boardVo = new BoardVo();
 		
-		
 		boardVo = boardService.selectBoard(boardType,boardNum);
 		
 		model.addAttribute("boardType", boardType);
