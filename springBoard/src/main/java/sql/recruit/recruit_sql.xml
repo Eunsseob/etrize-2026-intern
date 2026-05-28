@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recruit">
+    
+    <resultMap type="com.spring.recruit.vo.RecruitVo" id="recruitVo">
+    	<result property="name" 	column="NAME"/>
+    	<result property="phone" 	column="PHONE"/>
+    </resultMap>
+    
+    <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
+        INSERT INTO 
+        	RECRUIT
+        	(SEQ
+        	,NAME
+        	,PHONE)
+        VALUES
+	        (
+	        RECRUIT_SEQ.NEXTVAL
+	        ,#{name, jdbcType=VARCHAR}
+	        ,#{phone, jdbcType=VARCHAR}
+
+	        )
+      </insert>
+      
+      <select id="userLogin1" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
+      		SELECT
+	  	  	   NAME, PHONE
+	  	  FROM
+	     	   RECRUIT
+	 	   WHERE
+	  	       NAME = #{name, jdbcType=VARCHAR}
+	 		   AND PHONE = #{phone, jdbcType=VARCHAR}
+      </select>
+      
+      <insert id="insertRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
+        INSERT INTO RECRUIT (SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE)
+        VALUES (RECRUIT_SEQ.NEXTVAL, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType})
+	  </insert>
+
+    <select id="getLastSeq" resultType="String">
+        SELECT RECRUIT_SEQ.CURRVAL FROM DUAL
+    </select>
+</mapper>

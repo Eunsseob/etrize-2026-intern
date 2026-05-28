@@ -18,7 +18,7 @@
 						id
 						</td>
 						<td>
-						<input name="userId" type="text" size="20" value="${user.userId}"> 
+						<input name="userId" type="text" size="20" value="${user.userName}"> 
 						</td>
 					</tr>
 					<tr>

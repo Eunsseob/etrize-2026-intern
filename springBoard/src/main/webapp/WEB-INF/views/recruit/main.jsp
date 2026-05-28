@@ -1,12 +1,330 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<%@include file="/WEB-INF/views/common/common.jsp"%>  
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>Insert title here</title>
 </head>
+<script>
+	// √ﬂ∞° πˆ∆∞
+    $j(document).ready(function() {
+
+		$j("#eduAdd").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#eduTable tbody").append(`
+		        <tr>
+		            <td><input type="checkbox" name="eduCheck"></td>
+		            <td>
+		                <input type="text" name="eduStart"><br>
+		                ~<br>
+		                <input type="text" name="eduEnd">
+		            </td>
+		            <td>
+		                <select name="eduStatus">
+		                    <option value="M">¿Á«–</option>
+		                    <option value="F">¡ﬂ≈</option>
+		                    <option value="X">¡πæ˜</option>
+		                </select>
+		            </td>
+		            <td><input type="text" name="eduSchool"><br>
+			            <select name="edy">
+			            <option value="z">º≠øÔ</option>
+			            <option value="x">∞Ê±‚</option>
+			            <option value="c">¡ˆπÊ</option>
+			        </select></td>
+		            <td><input type="text" name="eduMajor"></td>
+		            <td><input type="text" name="eduGrade"></td>
+		        </tr>
+		    `);
+		});
+
+		$j("#carAdd").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#carTable tbody").append(`
+		        <tr>
+		            <td><input type="checkbox" name="carCheck"></td>
+		            <td>
+		                <input type="text" name="startPeriod">
+		                ~<br>
+		                <input type="text" name="endPeriod">
+		            </td>
+		            
+		            <td>
+		            	<input type="text" name="compName">
+			 		</td>
+		            <td><input type="text" name="task"></td>
+		            <td><input type="text" name="salary"></td>
+		        </tr>
+		    `);
+		});
+		
+		$j("#cerAdd").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#cerTable tbody").append(`
+		        <tr>
+		            <td><input type="checkbox" name="cerCheck"></td>
+		            <td><input type="text" name="qualifiName"></td>
+		            <td><input type="text" name="acquDate"></td>
+		            <td><input type="text" name="organizeName"></td>
+		        </tr>
+		    `);
+		});
+		// ªË¡¶ πˆ∆∞
+		$j("#eduDel").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#eduTable tbody tr").each(function() {
+		        if($j(this).find("input[type='checkbox']").is(":checked")) {
+		            $j(this).remove();
+		        }
+		    });
+		});
+		
+		$j("#carDel").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#carTable tbody tr").each(function() {
+		        if($j(this).find("input[type='checkbox']").is(":checked")) {
+		            $j(this).remove();
+		        }
+		    });
+		});
+		
+		$j("#cerDel").on("click", function(e) {
+		    e.preventDefault();
+		    $j("#cerTable tbody tr").each(function() {
+		        if($j(this).find("input[type='checkbox']").is(":checked")) {
+		            $j(this).remove();
+		        }
+		    });
+		});
+		
+		$j("#saveBt").on("click", function() {
+		    var param = $j(".check :input").serialize();
+		    $j.ajax({
+		        url: "/recruit/userSignup.do",
+		        type: "POST",
+		        data: param,
+		        success: function() {
+		            alert("¿˙¿Âøœ∑·");
+		        },
+		        error: function() {
+		            alert("Ω«∆–");
+		        }
+		    });
+		});
+		    });
+	
+	
+</script>
+
 <body>
-	<h1>Î©îÏù∏Ïù¥ÎûÄÎã§</h1>
+	<h1>¿‘ªÁ¡ˆø¯º≠</h1>
+		<form class="check" action="/recruit/userSignup.do" method="post">
+	<table align="center">
+	<tr>
+		<td>
+			<table border ="1"> 
+					<tr>
+						<td align="center">
+							¿Ã∏ß
+						</td>
+						<td>
+							<input type="text" name="name" value="${name}">
+						</td>
+						<td>ª˝≥‚ø˘¿œ</td>
+						<td>
+							<input type="text" name="birth">
+						</td>
+					</tr>
+					<tr>
+						<td>º∫∫∞</td>
+						<td>
+							<select name="gender">
+					            <option value="≥≤¿⁄">≥≤¿⁄</option>
+					            <option value="ø©¿⁄">ø©¿⁄</option>
+					        </select> 
+						</td>
+						<td align="center">ø¨∂Ù√≥</td>
+						<td>
+							<input type="text" name="phone" value="${phone}">
+						</td>
+					</tr>
+					<tr>
+						<td align="center">email</td>
+						<td>
+							<input type="text" name="email">
+						</td>
+						<td>¡÷º“</td>
+						<td>
+							<input type="text" name="addr">
+						</td>
+					</tr>
+					<tr>
+						<td>»Ò∏¡±Ÿπ´¡ˆ</td>
+						<td>
+							<select name="location">
+					            <option value="º≠øÔ">º≠øÔ</option>
+					            <option value="¿¸±π">¿¸±π</option>
+					        </select> 
+						</td>
+						<td>±Ÿπ´«¸≈¬</td>
+						<td>
+							<select name="workType">
+					            <option value="¡§±‘¡˜">¡§±‘¡˜</option>
+					            <option value="∞Ëæ‡¡˜">∞Ëæ‡¡˜</option>
+					        </select>  
+						</td>
+					</tr>
+				</table>
+		
+		</br>
+		
+		<h2><strong>«–∑¬</strong></h2>
+<button type="button" id="eduAdd">√ﬂ∞°</button>
+<button type="button" id="eduDel">ªË¡¶</button>
+		</br>
+		
+		<table border=1 id="eduTable">
+				<tr>
+					<td>
+					</td>
+					<td>
+						¿Á«–±‚∞£
+					</td>
+					<td>
+						±∏∫–
+					</td>
+					<td>
+						«–±≥∏Ì(º“¿Á¡ˆ)
+					</td>
+					<td>
+						¿¸∞¯
+					</td>
+					<td>
+						«–¡°
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="checkbox">
+					</td>
+					<td>
+						<input type="text" name="educationList[0].startPeriod"></br>
+						~</br>
+						<input type="text" name="educationList[0].endPeriod"></br>
+					</td>
+					<td>
+						<select name="educationList[0].division">
+					         <option value="¿Á«–">¿Á«–</option>
+					         <option value="¡ﬂ≈">¡ﬂ≈</option>
+					         <option value="¡πæ˜">¡πæ˜</option>
+					     </select> 
+					</td>
+					<td>
+						<input type="text" name="educationList[0].schoolName"></br>
+						<select name="educationList[0].location">
+					         <option value="º≠øÔ">º≠øÔ</option>
+					         <option value="∞Ê±‚">∞Ê±‚</option>
+					         <option value="¡ˆπÊ">¡ˆπÊ</option>
+					     </select> 
+					 </td>
+					 <td>
+					 	<input type="text" name="educationList[0].major">
+					</td>
+					<td>
+					 	<input type="text" name="educationList[0].grade">
+					</td>
+				</tr>
+		</table>
+		
+		</br>
+		
+		<h2><strong>∞Ê∑¬</strong></h2>
+<button type="button" id="carAdd">√ﬂ∞°</button>
+<button type="button" id="carDel">ªË¡¶</button>
+		</br>
+		<table border=1 id="carTable">
+				<tr>
+					<td>
+					</td>
+					<td>
+						±Ÿπ´±‚∞£
+					</td>
+					<td>
+						»∏ªÁ∏Ì
+					</td>
+					<td>
+						∫Œº≠/¡˜±ﬁ/¡˜√•
+					</td>
+					<td>
+						¡ˆø™
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="checkbox">
+					</td>
+					<td>
+						<input id="address" type="text">
+						~</br>
+						<input id="address" type="text">
+					</td>
+					<td>
+						<input id="address" type="text">
+					</td>
+					<td>
+						<input id="address" type="text">
+					 </td>
+					<td>
+						<input id="address" type="text">
+					</td>
+				</tr>
+		</table>
+	
+		</br>
+		
+		<h2><strong>¿⁄∞›¡ı</strong></h2>
+<button type="button" id="cerAdd">√ﬂ∞°</button>
+<button type="button" id="cerDel">ªË¡¶</button>
+		</br>
+		<table border=1 id="cerTable">
+				<tr>
+					<td>
+					</td>
+					<td>
+						¿⁄∞›¡ı∏Ì
+					</td>
+					<td>
+						√ÎµÊ¿œ
+					</td>
+					<td>
+						πﬂ«‡√≥
+					</td>
+				</tr>
+				<tr>
+					<td>
+					
+					<input type="checkbox">
+					</td>
+					 <td>
+					 	<input id="address" type="text">
+					</td>
+					 <td>
+					 	<input id="address" type="text">
+					</td>
+					<td>
+						<input id="address" type="text">
+					</td>
+				</tr>
+		</table>
+		
+		</br>
+		</br>
+		<button type="button" id="saveBt">¿˙¿Â</button>
+		<button id="#" value="ªË¡¶">¡¶√‚</button>
+		</br>
+</table>
+</form>	
 </body>
 </html>

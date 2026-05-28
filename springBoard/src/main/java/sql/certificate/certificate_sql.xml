@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="certificate">
+    
+    <resultMap type="com.spring.certificate.vo.CertificateVo" id="certificateVo">
+    	
+    </resultMap>
+    
+     <insert id="insertCertificateList" parameterType="java.util.List">
+        INSERT ALL
+        <foreach collection="list" item="cer">
+            INTO CERTIFICATE (CERT_SEQ, SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)
+             VALUES (
+            CERT_SEQ.NEXTVAL,
+            #{cer.seq, jdbcType=VARCHAR},
+            #{cer.qualfiName, jdbcType=VARCHAR},
+            #{cer.acquDate, jdbcType=VARCHAR},
+            #{cer.organizeName, jdbcType=VARCHAR}
+        	)
+        </foreach>
+        SELECT * FROM DUAL
+    </insert>
+</mapper>

@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.spring.education.vo.EducationVo;
+
 @Service
 public interface educationService {
+
+	public void insertEducationList(List<EducationVo> list) throws Exception;
 
 }

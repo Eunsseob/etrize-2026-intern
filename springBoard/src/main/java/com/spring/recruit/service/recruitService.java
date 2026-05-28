@@ -4,7 +4,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.spring.recruit.vo.RecruitVo;
+
 @Service
 public interface recruitService {
 
+	// 회원가입 하는 메서드 
+	public int userSignup(RecruitVo recruitVo) throws Exception;
+	
+	// 로그인 하는 메서드 
+	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception;
+
+	public void insertRecruit(RecruitVo recruitVo) throws Exception;
+	public String getLastSeq() throws Exception;
 }

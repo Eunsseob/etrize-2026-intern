@@ -1,5 +1,11 @@
 package com.spring.recruit.vo;
 
+import java.util.List;
+
+import com.spring.career.vo.CareerVo;
+import com.spring.certificate.vo.CertificateVo;
+import com.spring.education.vo.EducationVo;
+
 public class RecruitVo {
 	
 	private String seq;
@@ -12,6 +18,30 @@ public class RecruitVo {
 	private String location;
 	private String workType;
 	private String submit;
+	
+	 // 리스트 추가
+    private List<EducationVo> educationList;
+    private List<CareerVo> careerList;
+    private List<CertificateVo> certificateList;
+    
+	public List<EducationVo> getEducationList() {
+		return educationList;
+	}
+	public void setEducationList(List<EducationVo> educationList) {
+		this.educationList = educationList;
+	}
+	public List<CareerVo> getCareerList() {
+		return careerList;
+	}
+	public void setCareerList(List<CareerVo> careerList) {
+		this.careerList = careerList;
+	}
+	public List<CertificateVo> getCertificateList() {
+		return certificateList;
+	}
+	public void setCertificateList(List<CertificateVo> certificateList) {
+		this.certificateList = certificateList;
+	}
 	public String getSeq() {
 		return seq;
 	}

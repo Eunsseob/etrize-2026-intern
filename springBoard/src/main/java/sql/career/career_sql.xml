@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="career">
+    
+     <insert id="insertCareerList" parameterType="java.util.List">
+        INSERT ALL
+        <foreach collection="list" item="car">
+            INTO CAREER (CAR_SEQ, SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK, SALARY)
+             VALUES (
+            CAR_SEQ.NEXTVAL,
+            #{car.seq, jdbcType=VARCHAR},
+            #{car.compName, jdbcType=VARCHAR},
+            #{car.location, jdbcType=VARCHAR},
+            #{car.startPeriod, jdbcType=VARCHAR},
+            #{car.endPeriod, jdbcType=VARCHAR},
+            #{car.task, jdbcType=VARCHAR},
+            #{car.salary, jdbcType=VARCHAR}
+        	)
+        </foreach>
+        SELECT * FROM DUAL
+    </insert>
+</mapper>
