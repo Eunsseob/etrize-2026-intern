@@ -27,6 +27,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.HomeController;
+import com.spring.career.service.careerService;
+import com.spring.career.vo.CareerVo;
+import com.spring.certificate.service.certificateService;
+import com.spring.certificate.vo.CertificateVo;
 import com.spring.common.CommonUtil;
 import com.spring.education.service.educationService;
 import com.spring.education.vo.EducationVo;
@@ -43,11 +47,11 @@ public class RecruitController {
 	@Autowired
 	educationService educationService;
 
-//	@Autowired
-//	careerService careerService;
-//
-//	@Autowired
-//	certificateService certificateService;
+	@Autowired
+	careerService careerService;
+
+	@Autowired
+	certificateService certificateService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -71,26 +75,42 @@ public class RecruitController {
         HttpSession session = request.getSession();
         session.setAttribute("name", existUser.getName());
         session.setAttribute("phone", existUser.getPhone());
+        session.setAttribute("seq", existUser.getSeq());
         return "redirect: /recruit/main.do";
 	}
 	
 	@RequestMapping(value = "/recruit/main.do", method = RequestMethod.GET)
     public String main(Model model, HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
-		model.addAttribute("name", session.getAttribute("name"));
-	    model.addAttribute("phone", session.getAttribute("phone"));
+	    String seq = (String) session.getAttribute("seq");
+
+	    RecruitVo recruit = recruitService.getRecruit(seq);
+	    List<EducationVo> educationList = educationService.getEducation(seq);
+	    List<CareerVo> careerList = careerService.getCareer(seq);
+	    List<CertificateVo> certificateList = certificateService.getCertificate(seq);
+
+	    model.addAttribute("recruit", recruit);
+	    model.addAttribute("educationList", educationList);
+	    model.addAttribute("careerList", careerList);
+	    model.addAttribute("certificateList", certificateList);
 		return "recruit/main";
     }
 	
 	@RequestMapping(value = "/recruit/userSignup.do", method = RequestMethod.POST)
-	public @ResponseBody String userSignup(RecruitVo recruitVo) throws Exception {
+	public @ResponseBody String userSignup1(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 
-	    // 1. RECRUIT insert
-	    recruitService.insertRecruit(recruitVo);
+		// 세션에서 seq 가져오기
+	    HttpSession session = request.getSession();
+	    String seq = (String) session.getAttribute("seq");
+
+	    recruitVo.setSeq(seq);
 	    
-	    // 2. 생성된 SEQ 조회
-	    String seq = recruitService.getLastSeq();
+	    recruitService.updateRecruit(recruitVo);
 	    
+        educationService.deleteEducation(seq);
+        careerService.deleteCareer(seq);
+        certificateService.deleteCertificate(seq);
+        
 	    // 3. 학력 insert (필수)
 	    if(recruitVo.getEducationList() != null && recruitVo.getEducationList().size() > 0) {
 	        for(EducationVo edu : recruitVo.getEducationList()) {
@@ -99,21 +119,25 @@ public class RecruitController {
 	        educationService.insertEducationList(recruitVo.getEducationList());
 	    }
 	    
+	    System.out.println("경력 들어간다");
+	    
 	    // 4. 경력 insert (선택)
-//	    if(recruitVo.getCareerList() != null && recruitVo.getCareerList().size() > 0) {
-//	    	for(EducationVo edu : recruitVo.getEducationList()) {
-//	    	    edu.setSeq(seq);  // EducationVo의 seq도 String으로
-//	    	}
-//	        careerService.insertCareerList(recruitVo.getCareerList());
-//	    }
-//	    
-//	    // 5. 자격증 insert (선택)
-//	    if(recruitVo.getCertificateList() != null && recruitVo.getCertificateList().size() > 0) {
-//	        for(CertificateVo cer : recruitVo.getCertificateList()) {
-//	            cer.setSeq(seq);
-//	        }
-//	        certificateService.insertCertificateList(recruitVo.getCertificateList());
-//	    }
+	    if(recruitVo.getCareerList() != null && recruitVo.getCareerList().size() > 0) {
+	    	for(CareerVo car : recruitVo.getCareerList()) {
+	    	    car.setSeq(seq);
+	    	}
+	        careerService.insertCareerList(recruitVo.getCareerList());
+	    }
+
+	    System.out.println("자격증 들어간다");
+	    
+	    // 5. 자격증 insert (선택)
+	    if(recruitVo.getCertificateList() != null && recruitVo.getCertificateList().size() > 0) {
+	        for(CertificateVo cer : recruitVo.getCertificateList()) {
+	            cer.setSeq(seq);
+	        }
+	        certificateService.insertCertificateList(recruitVo.getCertificateList());
+	    }
 	    
 	    return "success";
 	}

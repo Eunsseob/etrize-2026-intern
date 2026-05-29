@@ -3,26 +3,37 @@
 <mapper namespace="education">
     
     <resultMap type="com.spring.education.vo.EducationVo" id="educationVo">
-    	<result property="name" 	column="NAME"/>
-    	<result property="phone" 	column="PHONE"/>
-    </resultMap>
+	    <result property="eduSeq" column="EDU_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="schoolName" column="SCHOOL_NAME"/>
+	    <result property="division" column="DIVISION"/>
+	    <result property="startPeriod" column="START_PERIOD"/>
+	    <result property="endPeriod" column="END_PERIOD"/>
+	    <result property="major" column="MAJOR"/>
+	    <result property="grade" column="GRADE"/>
+	    <result property="location" column="LOCATION"/>
+	</resultMap>
+	
+     <insert id="insertEducation" parameterType="com.spring.education.vo.EducationVo">
+	    INSERT INTO EDUCATION (EDU_SEQ, SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
+	    VALUES (
+	        EDU_SEQ.NEXTVAL,
+	        #{seq, jdbcType=VARCHAR},
+	        #{schoolName, jdbcType=VARCHAR},
+	        #{division, jdbcType=VARCHAR},
+	        #{startPeriod, jdbcType=VARCHAR},
+	        #{endPeriod, jdbcType=VARCHAR},
+	        #{major, jdbcType=VARCHAR},
+	        #{grade, jdbcType=VARCHAR},
+	        #{location, jdbcType=VARCHAR}
+	    )
+	</insert>
     
-     <insert id="insertEducationList" parameterType="java.util.List">
-        INSERT ALL
-        <foreach collection="list" item="edu">
-            INTO EDUCATION (EDU_SEQ, SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
-             VALUES (
-            EDU_SEQ.NEXTVAL,
-            #{edu.seq, jdbcType=VARCHAR},
-            #{edu.schoolName, jdbcType=VARCHAR},
-            #{edu.division, jdbcType=VARCHAR},
-            #{edu.startPeriod, jdbcType=VARCHAR},
-            #{edu.endPeriod, jdbcType=VARCHAR},
-            #{edu.major, jdbcType=VARCHAR},
-            #{edu.grade, jdbcType=VARCHAR},
-            #{edu.location, jdbcType=VARCHAR}
-        	)
-        </foreach>
-        SELECT * FROM DUAL
-    </insert>
+	    <delete id="deleteEducation" parameterType="String">
+		    DELETE FROM EDUCATION WHERE SEQ = #{seq}
+		</delete>
+		
+		<select id="getEducationList" parameterType="String" resultMap="educationVo">
+		    SELECT * FROM EDUCATION WHERE SEQ = #{seq}
+		</select>
 </mapper>

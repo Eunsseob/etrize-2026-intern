@@ -23,4 +23,14 @@ public class careerServiceImpl implements careerService{
 	public void insertCareerList(List<CareerVo> list) throws Exception{
 		careerDao.insertCareerList(list);
 	}
+	
+	@Override
+	public void deleteCareer(String seq) throws Exception{
+		careerDao.deleteCareer(seq);
+	}
+	
+	@Override
+	public List<CareerVo> getCareer(String seq) throws Exception{
+		return careerDao.getCareer(seq);
+	}
 }

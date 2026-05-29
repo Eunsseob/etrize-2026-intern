@@ -2,21 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="career">
     
-     <insert id="insertCareerList" parameterType="java.util.List">
-        INSERT ALL
-        <foreach collection="list" item="car">
-            INTO CAREER (CAR_SEQ, SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK, SALARY)
+    <resultMap type="com.spring.career.vo.CareerVo" id="careerVo">
+	    <result property="carSeq" column="CAR_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="compName" column="COMP_NAME"/>
+	    <result property="location" column="LOCATION"/>
+	    <result property="startPeriod" column="START_PERIOD"/>
+	    <result property="endPeriod" column="END_PERIOD"/>
+	    <result property="task" column="TASK"/>
+	 </resultMap>
+	
+     <insert id="insertCareerList" parameterType="com.spring.career.vo.CareerVo">
+        INSERT 
+            INTO CAREER (CAR_SEQ, SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK)
              VALUES (
             CAR_SEQ.NEXTVAL,
-            #{car.seq, jdbcType=VARCHAR},
-            #{car.compName, jdbcType=VARCHAR},
-            #{car.location, jdbcType=VARCHAR},
-            #{car.startPeriod, jdbcType=VARCHAR},
-            #{car.endPeriod, jdbcType=VARCHAR},
-            #{car.task, jdbcType=VARCHAR},
-            #{car.salary, jdbcType=VARCHAR}
+            #{seq, jdbcType=VARCHAR},
+            #{compName, jdbcType=VARCHAR},
+            #{location, jdbcType=VARCHAR},
+            #{startPeriod, jdbcType=VARCHAR},
+            #{endPeriod, jdbcType=VARCHAR},
+            #{task, jdbcType=VARCHAR}
         	)
-        </foreach>
-        SELECT * FROM DUAL
     </insert>
+    
+    <delete id="deleteCareer" parameterType="String">
+		    DELETE FROM CAREER WHERE SEQ = #{seq}
+	</delete>
+	
+	<select id="getCareerList" parameterType="String" resultMap="careerVo">
+	    SELECT * FROM CAREER WHERE SEQ = #{seq}
+	</select>
 </mapper>

@@ -10,4 +10,7 @@ public interface careerService {
 
 	public void insertCareerList(List<CareerVo> list) throws Exception;
 
+	public void deleteCareer(String seq) throws Exception;
+
+	public List<CareerVo> getCareer(String seq) throws Exception;
 }

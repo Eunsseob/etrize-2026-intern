@@ -19,6 +19,18 @@ public class EducationDaoImpl implements EducationDao{
 	// 넣는방법
 	@Override
 	public void insertEducationList(List<EducationVo> list) throws Exception {
-	    sqlSession.insert("education.insertEducationList", list);
+		for(EducationVo edu : list) {
+	        sqlSession.insert("education.insertEducation", edu);
+	    }
+	}
+	
+	@Override
+	public void deleteEducation(String seq) throws Exception {
+	    sqlSession.delete("education.deleteEducation", seq);
+	}
+	
+	@Override
+	public List<EducationVo> getEducation(String seq) throws Exception{
+		return sqlSession.selectList("education.getEducationList", seq);
 	}
 }

@@ -15,6 +15,7 @@ public interface recruitService {
 	// 로그인 하는 메서드 
 	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception;
 
-	public void insertRecruit(RecruitVo recruitVo) throws Exception;
-	public String getLastSeq() throws Exception;
+	public int updateRecruit(RecruitVo recruitVo) throws Exception;
+
+	public RecruitVo getRecruit(String seq) throws Exception;
 }

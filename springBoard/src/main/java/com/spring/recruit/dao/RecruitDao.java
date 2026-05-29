@@ -12,6 +12,8 @@ public interface RecruitDao {
 	//로그인 메소드
 	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception;
 
-	public void insertRecruit(RecruitVo recruitVo) throws Exception;
-	public String getLastSeq() throws Exception;
+	// 성공여부 int 값으로 가져오기
+	public int updateRecruit(RecruitVo recruitVo) throws Exception;
+	
+	public RecruitVo getRecruit(String seq) throws Exception;
 }

@@ -11,4 +11,8 @@ public interface educationService {
 
 	public void insertEducationList(List<EducationVo> list) throws Exception;
 
+	public void deleteEducation(String seq) throws Exception;
+
+	public List<EducationVo> getEducation(String seq) throws Exception;
+
 }

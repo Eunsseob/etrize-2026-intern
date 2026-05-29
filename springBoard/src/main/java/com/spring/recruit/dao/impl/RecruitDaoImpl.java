@@ -20,7 +20,7 @@ public class RecruitDaoImpl implements RecruitDao{
 	@Override
 	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception {
 		   
-		RecruitVo result = sqlSession.selectOne("user.userLogin1", recruitVo);
+		RecruitVo result = sqlSession.selectOne("recruit.userLogin1", recruitVo);
 		
 		return result;
 	}
@@ -29,16 +29,17 @@ public class RecruitDaoImpl implements RecruitDao{
 	@Override
 	public int userSignup(RecruitVo recruitVo) throws Exception {
 			   
-		return sqlSession.insert("user.userSignup1", recruitVo);
+		return sqlSession.insert("recruit.userSignup1", recruitVo);
 	}
 	
 	// 넣는 방법
-	public void insertRecruit(RecruitVo recruitVo) throws Exception {
-	    sqlSession.insert("recruit.insertRecruit", recruitVo);
+	public int updateRecruit(RecruitVo recruitVo) throws Exception {
+	    
+		return sqlSession.update("recruit.updateRecruit", recruitVo);
 	}
 
-	// 마지막 시퀀스 가져오는 방법
-	public String getLastSeq() throws Exception {
-	    return sqlSession.selectOne("recruit.getLastSeq");
+	// 저장한거 가져오기
+	public RecruitVo getRecruit(String seq) throws Exception {
+	    return sqlSession.selectOne("recruit.getRecruit", seq);
 	}
 }

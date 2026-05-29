@@ -28,11 +28,12 @@ public class recruitServiceImpl implements recruitService{
 	    return recruitDao.userLogin(recruitVo);  // 수정된 데이터 넘기기
 	}
 	
-	public void insertRecruit(RecruitVo recruitVo) throws Exception {
-	    recruitDao.insertRecruit(recruitVo);
+	public int updateRecruit(RecruitVo recruitVo) throws Exception {
+	    return recruitDao.updateRecruit(recruitVo);
 	}
 
-	public String getLastSeq() throws Exception {
-	    return recruitDao.getLastSeq();
+	// 저장된거 가져오기
+	public RecruitVo getRecruit(String seq) throws Exception {
+	    return recruitDao.getRecruit(seq);
 	}
 }

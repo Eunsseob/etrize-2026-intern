@@ -24,7 +24,7 @@
       
       <select id="userLogin1" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
       		SELECT
-	  	  	   NAME, PHONE
+	  	  	   NAME, PHONE, SEQ
 	  	  FROM
 	     	   RECRUIT
 	 	   WHERE
@@ -32,12 +32,20 @@
 	 		   AND PHONE = #{phone, jdbcType=VARCHAR}
       </select>
       
-      <insert id="insertRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
-        INSERT INTO RECRUIT (SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE)
-        VALUES (RECRUIT_SEQ.NEXTVAL, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType})
-	  </insert>
+      <update id="updateRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
+		    UPDATE RECRUIT
+		    SET NAME = #{name, jdbcType=VARCHAR},
+		        BIRTH = #{birth, jdbcType=VARCHAR},
+		        GENDER = #{gender, jdbcType=VARCHAR},
+		        PHONE = #{phone, jdbcType=VARCHAR},
+		        EMAIL = #{email, jdbcType=VARCHAR},
+		        ADDR = #{addr, jdbcType=VARCHAR},
+		        LOCATION = #{location, jdbcType=VARCHAR},
+		        WORK_TYPE = #{workType, jdbcType=VARCHAR}
+		    WHERE SEQ = #{seq, jdbcType=VARCHAR}
+		</update>
 
-    <select id="getLastSeq" resultType="String">
-        SELECT RECRUIT_SEQ.CURRVAL FROM DUAL
-    </select>
+		<select id="getRecruit" parameterType="String" resultType="com.spring.recruit.vo.RecruitVo">
+		    SELECT * FROM RECRUIT WHERE SEQ = #{seq}
+		</select>
 </mapper>
