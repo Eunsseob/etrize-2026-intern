@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.spring.career.vo.CareerVo;
+import com.spring.education.vo.EducationVo;
 import com.spring.recruit.vo.RecruitVo;
 
 @Service
@@ -18,4 +20,6 @@ public interface recruitService {
 	public int updateRecruit(RecruitVo recruitVo) throws Exception;
 
 	public RecruitVo getRecruit(String seq) throws Exception;
+
+	public void submitRecruit(String seq) throws Exception;
 }

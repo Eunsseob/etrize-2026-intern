@@ -8,9 +8,63 @@
 <title>Insert title here</title>
 </head>
 <script>
+
 	// 추가 버튼
     $j(document).ready(function() {
 
+    	function calcTotalPeriod() {
+    	    let totalMonths = 0;
+
+    	    // 학력 기간 합산
+    	    $("#eduTable tbody tr").each(function() {
+    	        const start = $(this).find("[name*='startPeriod']").val();
+    	        const end   = $(this).find("[name*='endPeriod']").val();
+    	        if (start && end) {
+    	            const s = start.split(".");
+    	            const e = end.split(".");
+    	            const startM = parseInt(s[0]) * 12 + parseInt(s[1]);
+    	            const endM   = parseInt(e[0]) * 12 + parseInt(e[1]);
+    	            if (endM > startM) totalMonths += (endM - startM);
+    	        }
+    	    });
+
+    	    // 경력 기간 합산
+    	    $("#carTable tbody tr").each(function() {
+    	        const start = $(this).find("[name*='startPeriod']").val();
+    	        const end   = $(this).find("[name*='endPeriod']").val();
+    	        if (start && end) {
+    	            const s = start.split(".");
+    	            const e = end.split(".");
+    	            const startM = parseInt(s[0]) * 12 + parseInt(s[1]);
+    	            const endM   = parseInt(e[0]) * 12 + parseInt(e[1]);
+    	            if (endM > startM) totalMonths += (endM - startM);
+    	        }
+    	    });
+
+    	    const years  = Math.floor(totalMonths / 12);
+    	    const months = totalMonths % 12;
+    	    $("#totalPeriod").text(years + "년 " + months + "개월");
+    	}
+    	
+    	$j("#submitBt").on("click", function() {
+    		if ("${recruit.submit}" != "S") {
+    	        alert("저장 후 제출해주세요!");
+    	        return;
+    	    }
+    		$j.ajax({
+    	        url: "/recruit/submitRecruit.do",
+    	        type: "POST",
+    	        data: { seq: "${recruit.seq}" },
+    	        success: function() {
+    	            alert("제출완료");
+    	            location.reload();
+    	        },
+    	        error: function() {
+    	            alert("실패");
+    	        }
+    	    });
+    	});
+    	
 		$j("#eduAdd").on("click", function(e) {
 		    e.preventDefault();
 		    const idx = $j("#eduTable tbody tr").length;
@@ -135,6 +189,7 @@
 		        data: param,
 		        success: function() {
 		            alert("저장완료");
+		            location.reload();
 		        },
 		        error: function() {
 		            alert("실패");
@@ -205,8 +260,26 @@
 						</td>
 					</tr>
 				</table>
-		
-		</br>
+				<br><br>
+				<c:if test="${recruit.submit == 'Y'}">
+		<table border="1"> 
+    <tr>
+        <td>학력사항</td>
+        <td>경력사항</td>
+        <td>희망연봉</td>
+        <td>희망근무지/근무형태</td>
+    </tr>
+    <tr>
+        <!-- submit Y일때만 보여주기 -->
+            <td>대학교(${eduPeriod}) ${educationList[0].division}</td>
+            <td>경력 ${carPeriod}</td>
+        
+        <td>회사내규에 따름</td>
+        <td>${recruit.location}<br>${recruit.workType}</td>
+    </tr>
+</table>
+</c:if>
+		<br>
 		
 		<h2><strong>학력</strong></h2>
 		<button type="button" id="eduAdd">추가</button>
@@ -300,7 +373,7 @@
 		<h2><strong>경력</strong></h2>
 <button type="button" id="carAdd">추가</button>
 <button type="button" id="carDel">삭제</button>
-		</br>
+		<br>
 		<table border=1 id="carTable" varStatus="k">
 		<thead>
 				<tr>
@@ -434,7 +507,7 @@
 		</br>
 		</br>
 		<button type="button" id="saveBt">저장</button>
-		<button id="#" value="삭제">제출</button>
+		<button type="button" id="submitBt">제출</button>
 		</br>
 </table>
 </form>	

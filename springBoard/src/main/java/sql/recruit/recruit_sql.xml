@@ -3,9 +3,17 @@
 <mapper namespace="recruit">
     
     <resultMap type="com.spring.recruit.vo.RecruitVo" id="recruitVo">
-    	<result property="name" 	column="NAME"/>
-    	<result property="phone" 	column="PHONE"/>
-    </resultMap>
+	    <result property="seq"      column="SEQ"/>
+	    <result property="name"     column="NAME"/>
+	    <result property="birth"    column="BIRTH"/>
+	    <result property="gender"   column="GENDER"/>
+	    <result property="phone"    column="PHONE"/>
+	    <result property="email"    column="EMAIL"/>
+	    <result property="addr"     column="ADDR"/>
+	    <result property="location" column="LOCATION"/>
+	    <result property="workType" column="WORK_TYPE"/>
+	    <result property="submit"   column="SUBMIT"/>
+	</resultMap>
     
     <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
         INSERT INTO 
@@ -41,11 +49,16 @@
 		        EMAIL = #{email, jdbcType=VARCHAR},
 		        ADDR = #{addr, jdbcType=VARCHAR},
 		        LOCATION = #{location, jdbcType=VARCHAR},
-		        WORK_TYPE = #{workType, jdbcType=VARCHAR}
+		        WORK_TYPE = #{workType, jdbcType=VARCHAR},
+		        SUBMIT = 'S'
 		    WHERE SEQ = #{seq, jdbcType=VARCHAR}
 		</update>
 
-		<select id="getRecruit" parameterType="String" resultType="com.spring.recruit.vo.RecruitVo">
+		<select id="getRecruit" parameterType="String" resultMap="recruitVo">
 		    SELECT * FROM RECRUIT WHERE SEQ = #{seq}
 		</select>
+		
+		<update id="submitRecruit" parameterType="String">
+		    UPDATE RECRUIT SET SUBMIT = 'Y' WHERE SEQ = #{seq}
+		</update>
 </mapper>

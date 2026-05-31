@@ -79,6 +79,40 @@ public class RecruitController {
         return "redirect: /recruit/main.do";
 	}
 	
+	private int calcMonths(String start, String end) {
+	    try {
+	        if (start == null || end == null || start.isEmpty() || end.isEmpty()) return 0;
+	        String[] s = start.split("\\.");
+	        String[] e = end.split("\\.");
+	        int sy = Integer.parseInt(s[0]);
+	        int ey = Integer.parseInt(e[0]);
+	        if (sy < 100) sy += 2000;
+	        if (ey < 100) ey += 2000;
+	        int startM = sy * 12 + Integer.parseInt(s[1]);
+	        int endM   = ey * 12 + Integer.parseInt(e[1]);
+	        return endM > startM ? endM - startM : 0;
+	    } catch (Exception ex) {
+	        return 0;
+	    }
+	}
+	
+	// 제출 처리
+	@RequestMapping("/recruit/submitRecruit.do")
+	@ResponseBody
+	public void submitRecruit(String seq) throws Exception {
+	    recruitService.submitRecruit(seq);
+	}
+
+	// 제출 후 보여주는 페이지
+	@RequestMapping("/recruit/recruitView.do")
+	public String recruitView(String seq, Model model) throws Exception {
+	    model.addAttribute("recruit", recruitService.getRecruit(seq));
+	    model.addAttribute("educationList", educationService.getEducationList(seq));
+	    model.addAttribute("careerList", careerService.getCareerList(seq));
+	    model.addAttribute("certificateList", certificateService.getCertList(seq));
+	    return "recruit/recruitView";
+	}
+	
 	@RequestMapping(value = "/recruit/main.do", method = RequestMethod.GET)
     public String main(Model model, HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
@@ -89,6 +123,31 @@ public class RecruitController {
 	    List<CareerVo> careerList = careerService.getCareer(seq);
 	    List<CertificateVo> certificateList = certificateService.getCertificate(seq);
 
+	    // 학력 기간만 따로 계산
+	    int eduMonths = 0;
+	    if (educationList != null) {
+	        for (EducationVo edu : educationList) {
+	            eduMonths += calcMonths(edu.getStartPeriod(), edu.getEndPeriod());
+	        }
+	    }
+	    int eduYears  = eduMonths / 12;
+
+	    for (EducationVo edu : educationList) {
+	        System.out.println("start: " + edu.getStartPeriod() + " end: " + edu.getEndPeriod());
+	    }
+	    
+	    // 학력 기간만 따로 계산
+	    int carMonths = 0;
+	    if (careerList != null) {
+	        for (CareerVo car : careerList) {
+	            carMonths += calcMonths(car.getStartPeriod(), car.getEndPeriod());
+	        }
+	    }
+	    int carYears  = carMonths / 12;
+	    int carMon    = carMonths % 12;
+	    
+	    model.addAttribute("eduPeriod", eduYears + "년");
+	    model.addAttribute("carPeriod", carYears + "년 " + carMon + "개월");
 	    model.addAttribute("recruit", recruit);
 	    model.addAttribute("educationList", educationList);
 	    model.addAttribute("careerList", careerList);

@@ -16,4 +16,6 @@ public interface RecruitDao {
 	public int updateRecruit(RecruitVo recruitVo) throws Exception;
 	
 	public RecruitVo getRecruit(String seq) throws Exception;
+
+	public void submitRecruit(String seq) throws Exception;
 }

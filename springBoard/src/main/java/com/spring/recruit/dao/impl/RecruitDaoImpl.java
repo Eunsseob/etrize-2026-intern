@@ -42,4 +42,9 @@ public class RecruitDaoImpl implements RecruitDao{
 	public RecruitVo getRecruit(String seq) throws Exception {
 	    return sqlSession.selectOne("recruit.getRecruit", seq);
 	}
+	
+	@Override
+	public void submitRecruit(String seq) throws Exception {
+	    sqlSession.update("recruit.submitRecruit", seq);
+	}
 }
