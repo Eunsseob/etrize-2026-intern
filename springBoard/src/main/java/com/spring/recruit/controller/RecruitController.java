@@ -103,16 +103,6 @@ public class RecruitController {
 	    recruitService.submitRecruit(seq);
 	}
 
-	// 제출 후 보여주는 페이지
-	@RequestMapping("/recruit/recruitView.do")
-	public String recruitView(String seq, Model model) throws Exception {
-	    model.addAttribute("recruit", recruitService.getRecruit(seq));
-	    model.addAttribute("educationList", educationService.getEducationList(seq));
-	    model.addAttribute("careerList", careerService.getCareerList(seq));
-	    model.addAttribute("certificateList", certificateService.getCertList(seq));
-	    return "recruit/recruitView";
-	}
-	
 	@RequestMapping(value = "/recruit/main.do", method = RequestMethod.GET)
     public String main(Model model, HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();

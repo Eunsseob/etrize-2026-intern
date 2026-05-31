@@ -270,7 +270,6 @@
         <td>희망근무지/근무형태</td>
     </tr>
     <tr>
-        <!-- submit Y일때만 보여주기 -->
             <td>대학교(${eduPeriod}) ${educationList[0].division}</td>
             <td>경력 ${carPeriod}</td>
         
