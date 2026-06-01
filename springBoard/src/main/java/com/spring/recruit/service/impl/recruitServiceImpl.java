@@ -24,6 +24,11 @@ public class recruitServiceImpl implements recruitService{
 		return recruitDao.userSignup(recruitVo);  // 수정된 데이터 넘기기
 	}
 	
+	@Override
+	public int phoneCheck(RecruitVo recruitVo) throws Exception {
+		return recruitDao.phoneCheck(recruitVo);  // 수정된 데이터 넘기기
+	}
+	
 	// 로그인 하기
 	@Override
 	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception {

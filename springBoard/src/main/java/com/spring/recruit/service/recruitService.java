@@ -17,9 +17,15 @@ public interface recruitService {
 	// 로그인 하는 메서드 
 	public RecruitVo userLogin(RecruitVo recruitVo) throws Exception;
 
+	// 이력서 저장 메서드
 	public int updateRecruit(RecruitVo recruitVo) throws Exception;
 
+	// 이력서 가져오는 메서드
 	public RecruitVo getRecruit(String seq) throws Exception;
 
+	// 이력서 제출 메서드
 	public void submitRecruit(String seq) throws Exception;
+
+	// 전화번호 검증 로직
+	public int phoneCheck(RecruitVo recruitVo) throws Exception;
 }

@@ -9,6 +9,7 @@
 	    <result property="organizeName" column="ORGANIZE_NAME"/>
 	 </resultMap>
     
+    <!-- 자격증을 넣기위한 쿼리문 -->
      <insert id="insertCertificateList" parameterType="com.spring.certificate.vo.CertificateVo">
         INSERT INTO CERTIFICATE (CERT_SEQ, SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)
             VALUES (
@@ -20,10 +21,12 @@
         	)
 	  </insert>
 	  
+	  <!-- 자격증을 삭제하기 위한 쿼리문 -->
 	  <delete id="deleteCertificate" parameterType="String">
 		    DELETE FROM CERTIFICATE WHERE SEQ = #{seq}
 	</delete>
 	
+	<!-- 자격증을 가져오기 위한 쿼리문 -->	
 	<select id="getCertificateList" parameterType="String" resultMap="certificateVo">
 	    SELECT * FROM CERTIFICATE WHERE SEQ = #{seq}
 	</select>

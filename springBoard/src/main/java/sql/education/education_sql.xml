@@ -14,6 +14,7 @@
 	    <result property="location" column="LOCATION"/>
 	</resultMap>
 	
+	<!-- 학력을 넣기위한 쿼리문 -->
      <insert id="insertEducation" parameterType="com.spring.education.vo.EducationVo">
 	    INSERT INTO EDUCATION (EDU_SEQ, SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
 	    VALUES (
@@ -29,11 +30,13 @@
 	    )
 	</insert>
     
-	    <delete id="deleteEducation" parameterType="String">
-		    DELETE FROM EDUCATION WHERE SEQ = #{seq}
-		</delete>
-		
-		<select id="getEducationList" parameterType="String" resultMap="educationVo">
-		    SELECT * FROM EDUCATION WHERE SEQ = #{seq}
-		</select>
+    <!-- 학력을 삭제하기 위한 쿼리문 -->
+	<delete id="deleteEducation" parameterType="String">
+	   DELETE FROM EDUCATION WHERE SEQ = #{seq}
+	</delete>
+	
+	<!-- 학력을 가져오기 위한 쿼리문 -->	
+	<select id="getEducationList" parameterType="String" resultMap="educationVo">
+	    SELECT * FROM EDUCATION WHERE SEQ = #{seq}
+	</select>
 </mapper>

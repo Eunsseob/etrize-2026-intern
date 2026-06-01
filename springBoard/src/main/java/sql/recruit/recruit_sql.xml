@@ -15,6 +15,7 @@
 	    <result property="submit"   column="SUBMIT"/>
 	</resultMap>
     
+    <!-- 유저를 회원가입 시키기위한 쿼리문 -->
     <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
         INSERT INTO 
         	RECRUIT
@@ -30,6 +31,7 @@
 	        )
       </insert>
       
+      <!-- 유저를 로그인 시키기 위한 쿼리문 -->
       <select id="userLogin1" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
       		SELECT
 	  	  	   NAME, PHONE, SEQ
@@ -40,6 +42,7 @@
 	 		   AND PHONE = #{phone, jdbcType=VARCHAR}
       </select>
       
+      <!-- 이력서를 업데이트 시키기 위한 쿼리문 -->
       <update id="updateRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
 		    UPDATE RECRUIT
 		    SET NAME = #{name, jdbcType=VARCHAR},
@@ -54,11 +57,19 @@
 		    WHERE SEQ = #{seq, jdbcType=VARCHAR}
 		</update>
 
+		<!-- 저장한 이력서 중 RECRUIT를 가져오는 쿼리문 -->
 		<select id="getRecruit" parameterType="String" resultMap="recruitVo">
 		    SELECT * FROM RECRUIT WHERE SEQ = #{seq}
 		</select>
 		
+		<!-- 제출버튼을 위한 쿼리문 -->
 		<update id="submitRecruit" parameterType="String">
 		    UPDATE RECRUIT SET SUBMIT = 'Y' WHERE SEQ = #{seq}
 		</update>
+		
+		<select id="numberCheck" parameterType="String" resultType="int">
+      		SELECT COUNT(*)
+      		FROM RECRUIT
+      		WHERE PHONE = #{phone, jdbcType=VARCHAR}
+      	</select>
 </mapper>

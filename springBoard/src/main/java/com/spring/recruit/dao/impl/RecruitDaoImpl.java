@@ -33,12 +33,14 @@ public class RecruitDaoImpl implements RecruitDao{
 	}
 	
 	// 넣는 방법
+	@Override
 	public int updateRecruit(RecruitVo recruitVo) throws Exception {
 	    
 		return sqlSession.update("recruit.updateRecruit", recruitVo);
 	}
 
 	// 저장한거 가져오기
+	@Override
 	public RecruitVo getRecruit(String seq) throws Exception {
 	    return sqlSession.selectOne("recruit.getRecruit", seq);
 	}
@@ -46,5 +48,11 @@ public class RecruitDaoImpl implements RecruitDao{
 	@Override
 	public void submitRecruit(String seq) throws Exception {
 	    sqlSession.update("recruit.submitRecruit", seq);
+	}
+	
+	// 전화번호 중복 검증하기
+	@Override
+	public int phoneCheck(RecruitVo recruitVo) throws Exception {
+		return sqlSession.selectOne("recruit.numberCheck", recruitVo);
 	}
 }

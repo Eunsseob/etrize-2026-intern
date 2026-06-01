@@ -40,10 +40,10 @@ import com.spring.user.vo.UserVo;
 
 @Controller
 public class RecruitController {
-//	
+	
 	@Autowired 
 	recruitService recruitService;
-//	
+	
 	@Autowired
 	educationService educationService;
 
@@ -55,42 +55,75 @@ public class RecruitController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	// 로그인 폼 가져오기 위한 
 	@RequestMapping(value = "/recruit/login", method = RequestMethod.GET)
     public String login(Locale locale, Model model) throws Exception {
         return "recruit/login";
     }
 	
-	@RequestMapping(value = "/userSignup.do", method = RequestMethod.POST)
-	public @ResponseBody String userSignup(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = "/checkPhone.do", method = RequestMethod.POST)
+	@ResponseBody
+	public int checkPhone(RecruitVo recruitVo) throws Exception {
+	    return recruitService.phoneCheck(recruitVo);
+	}
+	
+	@RequestMapping(value = "/userLogin.do", method = RequestMethod.POST)
+	public @ResponseBody String userLogin(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 		System.out.println("들어옴");
 		
 		// DB에서 이름+전화번호로 조회
 	    RecruitVo existUser = recruitService.userLogin(recruitVo);
 	    
 	    if(existUser == null) {
-	    	recruitService.userSignup(recruitVo);
-	        existUser = recruitService.userLogin(recruitVo);
+	    	return "fail";
 	    } 
+	    
 	    // 있으면 로그인 처리
         HttpSession session = request.getSession();
         session.setAttribute("name", existUser.getName());
         session.setAttribute("phone", existUser.getPhone());
         session.setAttribute("seq", existUser.getSeq());
-        return "redirect: /recruit/main.do";
+        return "success";
 	}
 	
+	@RequestMapping(value = "/userSignup.do", method = RequestMethod.POST)
+	public @ResponseBody String userSignup(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+		// 중복 체크
+	    if (recruitService.phoneCheck(recruitVo) > 0) {
+	        return "duplicated"; // 중복 시 가입 중단
+	    }
+	    recruitService.userSignup(recruitVo);
+	    
+	    // 3. 가입된 유저 정보 다시 조회 (세션에 담기 위해)
+	    RecruitVo newUser = recruitService.userLogin(recruitVo);
+	    
+	    // 4. 즉시 세션 생성
+        HttpSession session = request.getSession();
+	    session.setAttribute("name", newUser.getName());
+	    session.setAttribute("phone", newUser.getPhone());
+	    session.setAttribute("seq", newUser.getSeq());
+	    
+	    return "signup_success";
+	}
+		
 	private int calcMonths(String start, String end) {
 	    try {
-	        if (start == null || end == null || start.isEmpty() || end.isEmpty()) return 0;
-	        String[] s = start.split("\\.");
-	        String[] e = end.split("\\.");
-	        int sy = Integer.parseInt(s[0]);
-	        int ey = Integer.parseInt(e[0]);
-	        if (sy < 100) sy += 2000;
-	        if (ey < 100) ey += 2000;
-	        int startM = sy * 12 + Integer.parseInt(s[1]);
-	        int endM   = ey * 12 + Integer.parseInt(e[1]);
-	        return endM > startM ? endM - startM : 0;
+	        if (start == null || end == null || start.isEmpty() || end.isEmpty())
+	        	return 0;
+	        // 구분자 유연하게 처리하는 방법
+	        String[] s = start.split("[.\\-/]");
+	        String[] e = end.split("[.\\-/]");
+	        
+	        int sy = Integer.parseInt(s[0].trim());
+	        int sm = Integer.parseInt(s[1].trim());
+	        int ey = Integer.parseInt(e[0].trim());
+	        int em = Integer.parseInt(e[1].trim());
+	        
+	        int startTotal = sy * 12 + sm;
+	        int endTotal   = ey * 12 + em;
+
+	        return Math.max(endTotal - startTotal, 0);
+
 	    } catch (Exception ex) {
 	        return 0;
 	    }
@@ -108,6 +141,7 @@ public class RecruitController {
 		HttpSession session = request.getSession();
 	    String seq = (String) session.getAttribute("seq");
 
+	    // 저장한 이력서들 다 가져오는 방법
 	    RecruitVo recruit = recruitService.getRecruit(seq);
 	    List<EducationVo> educationList = educationService.getEducation(seq);
 	    List<CareerVo> careerList = careerService.getCareer(seq);
@@ -117,10 +151,19 @@ public class RecruitController {
 	    int eduMonths = 0;
 	    if (educationList != null) {
 	        for (EducationVo edu : educationList) {
+	        	System.out.println("start: " + edu.getStartPeriod() + " end: " + edu.getEndPeriod());
 	            eduMonths += calcMonths(edu.getStartPeriod(), edu.getEndPeriod());
 	        }
 	    }
-	    int eduYears  = eduMonths / 12;
+	    int eduYears  = eduMonths / 23;
+	    
+	    if (eduYears>=2) {
+	    	eduYears = 4;
+	    } else if (eduYears >= 1){
+	    	eduYears = 2;
+	    } else {
+	    	eduYears = 0;
+	    }
 
 	    for (EducationVo edu : educationList) {
 	        System.out.println("start: " + edu.getStartPeriod() + " end: " + edu.getEndPeriod());
@@ -156,11 +199,13 @@ public class RecruitController {
 	    
 	    recruitService.updateRecruit(recruitVo);
 	    
+	    // 시퀀스에 있는 모든 서비스들을 제거한다.
         educationService.deleteEducation(seq);
         careerService.deleteCareer(seq);
         certificateService.deleteCertificate(seq);
         
-	    // 3. 학력 insert (필수)
+        // 추후 다시 넣음
+	    // 학력 insert (필수)
 	    if(recruitVo.getEducationList() != null && recruitVo.getEducationList().size() > 0) {
 	        for(EducationVo edu : recruitVo.getEducationList()) {
 	            edu.setSeq(seq);
@@ -170,7 +215,7 @@ public class RecruitController {
 	    
 	    System.out.println("경력 들어간다");
 	    
-	    // 4. 경력 insert (선택)
+	    // 경력 insert (선택)
 	    if(recruitVo.getCareerList() != null && recruitVo.getCareerList().size() > 0) {
 	    	for(CareerVo car : recruitVo.getCareerList()) {
 	    	    car.setSeq(seq);
@@ -180,7 +225,7 @@ public class RecruitController {
 
 	    System.out.println("자격증 들어간다");
 	    
-	    // 5. 자격증 insert (선택)
+	    // 자격증 insert (선택)
 	    if(recruitVo.getCertificateList() != null && recruitVo.getCertificateList().size() > 0) {
 	        for(CertificateVo cer : recruitVo.getCertificateList()) {
 	            cer.setSeq(seq);

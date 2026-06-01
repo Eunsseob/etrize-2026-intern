@@ -12,6 +12,7 @@
 	    <result property="task" column="TASK"/>
 	 </resultMap>
 	
+	<!-- 경력을 넣기위한 쿼리문 -->
      <insert id="insertCareerList" parameterType="com.spring.career.vo.CareerVo">
         INSERT 
             INTO CAREER (CAR_SEQ, SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK)
@@ -26,10 +27,12 @@
         	)
     </insert>
     
+    <!-- 경력을 삭제하기 위한 쿼리문 -->
     <delete id="deleteCareer" parameterType="String">
 		    DELETE FROM CAREER WHERE SEQ = #{seq}
 	</delete>
 	
+	<!-- 경력을 가져오기 위한 쿼리문 -->
 	<select id="getCareerList" parameterType="String" resultMap="careerVo">
 	    SELECT * FROM CAREER WHERE SEQ = #{seq}
 	</select>
