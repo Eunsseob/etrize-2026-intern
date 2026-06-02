@@ -28,4 +28,6 @@ public interface recruitService {
 
 	// 전화번호 검증 로직
 	public int phoneCheck(RecruitVo recruitVo) throws Exception;
+	
+	public void updateAllRecruitInfo(String seq, RecruitVo recruitVo) throws Exception;
 }

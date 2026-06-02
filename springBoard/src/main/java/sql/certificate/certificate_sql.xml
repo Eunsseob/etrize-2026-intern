@@ -30,4 +30,19 @@
 	<select id="getCertificateList" parameterType="String" resultMap="certificateVo">
 	    SELECT * FROM CERTIFICATE WHERE SEQ = #{seq}
 	</select>
+	
+	<!-- CER_SEQ 있으면 Update -->
+	<update id="updateCertificateList" parameterType="com.spring.certificate.vo.CertificateVo">
+	    UPDATE CERTIFICATE 
+	    SET QUALIFI_NAME = #{qualifiName}, 
+	        ACQU_DATE = #{acquDate}, 
+	        ORGANIZE_NAME = #{organizeName}
+	    WHERE CERT_SEQ = #{certSeq}
+	</update>
+	
+	<!-- CER_SEQ 없으면 Insert -->
+	<!-- DB에는 있지만, 리스트에 없다면? Delete -->
+	<delete id="deleteCertificateByCertSeq" parameterType="com.spring.certificate.vo.CertificateVo">
+	    DELETE FROM CERTIFICATE WHERE CERT_SEQ = #{certSeq}
+	</delete>
 </mapper>

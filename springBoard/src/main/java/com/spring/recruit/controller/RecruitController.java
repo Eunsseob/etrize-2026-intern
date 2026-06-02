@@ -189,49 +189,13 @@ public class RecruitController {
     }
 	
 	@RequestMapping(value = "/recruit/userSignup.do", method = RequestMethod.POST)
-	public @ResponseBody String userSignup1(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
-
-		// 세션에서 seq 가져오기
+	public @ResponseBody String userSignup1(@ModelAttribute RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 	    HttpSession session = request.getSession();
 	    String seq = (String) session.getAttribute("seq");
-
 	    recruitVo.setSeq(seq);
-	    
-	    recruitService.updateRecruit(recruitVo);
-	    
-	    // 시퀀스에 있는 모든 서비스들을 제거한다.
-        educationService.deleteEducation(seq);
-        careerService.deleteCareer(seq);
-        certificateService.deleteCertificate(seq);
-        
-        // 추후 다시 넣음
-	    // 학력 insert (필수)
-	    if(recruitVo.getEducationList() != null && recruitVo.getEducationList().size() > 0) {
-	        for(EducationVo edu : recruitVo.getEducationList()) {
-	            edu.setSeq(seq);
-	        }
-	        educationService.insertEducationList(recruitVo.getEducationList());
-	    }
-	    
-	    System.out.println("경력 들어간다");
-	    
-	    // 경력 insert (선택)
-	    if(recruitVo.getCareerList() != null && recruitVo.getCareerList().size() > 0) {
-	    	for(CareerVo car : recruitVo.getCareerList()) {
-	    	    car.setSeq(seq);
-	    	}
-	        careerService.insertCareerList(recruitVo.getCareerList());
-	    }
 
-	    System.out.println("자격증 들어간다");
-	    
-	    // 자격증 insert (선택)
-	    if(recruitVo.getCertificateList() != null && recruitVo.getCertificateList().size() > 0) {
-	        for(CertificateVo cer : recruitVo.getCertificateList()) {
-	            cer.setSeq(seq);
-	        }
-	        certificateService.insertCertificateList(recruitVo.getCertificateList());
-	    }
+	    // 이제 서비스 메서드 하나만 호출하면 안전합니다!
+	    recruitService.updateAllRecruitInfo(seq, recruitVo);
 	    
 	    return "success";
 	}

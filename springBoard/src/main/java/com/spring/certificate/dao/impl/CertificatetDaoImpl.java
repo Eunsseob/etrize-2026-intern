@@ -35,4 +35,14 @@ public class CertificatetDaoImpl implements CertificateDao{
 	public List<CertificateVo> getCertificate(String seq) throws Exception {
 	    return sqlSession.selectList("certificate.getCertificateList", seq);
 	}
+	
+	@Override
+    public int updateCertificateList(CertificateVo vo) {
+        return sqlSession.update("certificate.updateCertificateList", vo);
+    }
+
+    @Override
+    public int deleteCertificateByCertSeq(String certSeq) {
+        return sqlSession.delete("certificate.deleteCertificateByCertSeq", certSeq);
+    }
 }

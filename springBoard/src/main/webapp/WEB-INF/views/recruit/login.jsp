@@ -10,8 +10,23 @@
 <script type="text/javascript">
     $j(document).ready(function() {
     	$j("#submit").on("click", function() {
-    	    var param = $j('.login :input').serialize();
+    		var name  = $j("input[name='name']").val().trim();
+    	    var phone = $j("input[name='phone']").val().replace(/-/g, "");
 
+    	    if (name === "") {
+                alert("이름을 입력해주세요.");
+                $j("input[name='name']").focus();
+                return;
+            }
+
+            if (phone.length !== 11) {
+                alert("휴대폰번호 11자리를 입력해주세요.");
+                $j("input[name='phone']").focus();
+                return;
+            }
+
+    	    var param = $j('.login :input').serialize();
+    	    
     	    $j.ajax({
     	        url: "/userLogin.do",
     	        type: "POST",
@@ -51,17 +66,17 @@
             .replace(/(\-{1,2})$/g, "");
     }
 </script>
-<body>
+<body >
     <h2>입사지원 로그인</h2>
 		<form class = "login">
 				<table border="1" align="center">
 					<tr>
 						<th>이름</th>
-						<th><input type="text" name="name" value="${recruit.name}" maxlength="13"></th>
+						<th><input type="text" name="name" value="${recruit.name}" autofocus></th>
 					</tr>
 					<tr>
 						<th>휴대폰번호</th>
-						<th><input type="text" name="phone" value="${recruit.phone}", oninput="autoHyphen(this)"></th>
+						<th><input type="text" name="phone" value="${recruit.phone}", oninput="autoHyphen(this)" minlength="11" maxlength="13" autofocus></th>
 					</tr>
 					<tr>
 						<th colspan=2>	

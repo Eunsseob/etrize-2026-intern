@@ -12,4 +12,7 @@ public interface CertificateDao {
 
 	public List<CertificateVo> getCertificate(String seq) throws Exception;
 
+	public int updateCertificateList(CertificateVo vo) throws Exception;
+	
+    public int deleteCertificateByCertSeq(String certSeq) throws Exception;
 }

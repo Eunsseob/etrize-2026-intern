@@ -10,6 +10,9 @@
 <script>
 
     $j(document).ready(function() {
+    	if ("${recruit.submit}" === "Y") {
+            $j("#saveBt, #submitBt, #eduAdd, #eduDel, #carAdd, #carDel, #cerAdd, #cerDel").hide();
+        }
     	
     	$j(document).on("blur", ".eduPeriod", function() {
     		console.log("blur 발생"); 
@@ -26,7 +29,7 @@
     	    // 시작 > 끝 체크
     	    if (start > end) {
     	        alert("시작일이 종료일보다 늦습니다.");
-    	        $j(this).val("");
+    	        $j(this).val("").focus();
     	        return;
     	    }
     	    
@@ -48,8 +51,8 @@
     	    });
 
     	    if (overlap) {
-    	        alert("재학기간이 겹칩니다.");
-    	        $j(this).val("");
+    	        alert("학력기간이 겹칩니다.");
+    	        $j(this).val("").focus();
     	    }
     	    
     	    $j("#carTable tbody tr").each(function() {
@@ -69,7 +72,7 @@
     	    });
     	    if (overlap) {
     	        alert("재학기간과 근무기간이 겹칩니다.");
-    	        $j(this).val("");
+    	        $j(this).val("").focus();
     	    }
     	});
     	
@@ -156,6 +159,7 @@
     	    });
     	});
     	
+    	
     	// 이메일 유효성 검사
     	$j(document).on("blur", ".emailInput", function() {
     		console.log("블러시작");
@@ -166,6 +170,8 @@
     	    // 스플릿으로 길이 2개검증하기
 	        if (val.split("@").length !== 2) {
 	        	alert("이메일 형식이 올바르지 않습니다.\n예) example@email.com");
+	        	$j(this).val("").focus();
+    	        
     	    }
     	});
     	
@@ -176,8 +182,9 @@
     	    if ($j(this).val().trim() === "") return;
     	    
     	    if (isNaN(val)) {
-    	        $j(this).val("");
+    	        $j(this).val("").focus();
     	        alert("학점은 숫자로 입력해주세요.");
+    	        return;
     	    }
     	    
     	    if (val < 0 || val > 4.5) {
@@ -199,6 +206,7 @@
 	        
 	        if (val.split("/").length !== 3) {
 	            alert("부서/직급/직책 형식으로 입력해주세요.\n예) 개발팀/대리/팀장");
+	            $j(this).val("").focus();
 	        }
     	});
     		
@@ -259,9 +267,12 @@
 		    const idx = $j("#cerTable tbody tr").length;
 		    $j("#cerTable tbody").append(`
 		        <tr>
+		    		<input type="hidden"
+		            name="certificateList[${w.index}].certSeq"
+		            value="${cer.certSeq}">
 		            <td><input type="checkbox" name="cerCheck"></td>
 		            <td><input type="text" name="certificateList[${idx}].qualifiName"></td>
-		            <td><input type="date" name="certificateList[${idx}].acquDate"></td>
+		            <td><input type="month" name="certificateList[${idx}].acquDate"></td>
 		            <td><input type="text" name="certificateList[${idx}].organizeName"></td>
 		        </tr>
 		    `);
@@ -269,65 +280,56 @@
 		
 		// 삭제 버튼
 		$j("#eduDel").on("click", function(e) {
-		    e.preventDefault();
 		    
-		 	// 1. 선택된 체크박스가 몇 개인지 확인
+		 	// 선택된 체크박스가 몇 개인지 확인
 		    var checkedRows = $j("#eduTable tbody tr").filter(function() {
 		        return $j(this).find("input[type='checkbox']").is(":checked");
 		    });
 
-		    // 2. 아무것도 선택되지 않았을 때
-		    if (checkedRows.length === 0) {
-		        alert("삭제할 항목을 선택해주세요.");
-		        return;
-		    }
-
-		    // 3. 전체 개수와 삭제할 개수를 비교
+		    // 전체 개수와 삭제할 개수를 비교
 		    var totalRows = $j("#eduTable tbody tr").length;
 		    if (totalRows - checkedRows.length < 1) {
 		        alert("최소 1개는 남아야 합니다.");
 		        return;
 		    }
 
-		    // 4. 삭제 수행
+		    // 삭제 수행
 		    checkedRows.remove();
 		});
 		
 		$j("#carDel").on("click", function(e) {
-		    e.preventDefault();
-		 // 1. 선택된 체크박스가 몇 개인지 확인
+			// 선택된 체크박스가 몇 개인지 확인
 		    var checkedRows = $j("#carTable tbody tr").filter(function() {
 		        return $j(this).find("input[type='checkbox']").is(":checked");
 		    });
 
-		    // 2. 아무것도 선택되지 않았을 때
-		    if (checkedRows.length === 0) {
-		        alert("삭제할 항목을 선택해주세요.");
-		        return;
-		    }
-
-		    // 3. 전체 개수와 삭제할 개수를 비교
+		    // 전체 개수와 삭제할 개수를 비교
 		    var totalRows = $j("#carTable tbody tr").length;
 		    if (totalRows - checkedRows.length < 1) {
 		        alert("최소 1개는 남아야 합니다.");
 		        return;
 		    }
 
-		    // 4. 삭제 수행
+		    // 삭제 수행
 		    checkedRows.remove();
 		});
 		
 		$j("#cerDel").on("click", function(e) {
-			if ($j("#cerTable tbody tr").length <= 1) {
+			// 선택된 체크박스가 몇 개인지 확인
+		    var checkedRows = $j("#cerTable tbody tr").filter(function() {
+		        return $j(this).find("input[type='checkbox']").is(":checked");
+		    });
+
+		    // 전체 개수와 삭제할 개수를 비교
+		    var totalRows = $j("#cerTable tbody tr").length;
+		    if (totalRows - checkedRows.length < 1) {
 		        alert("최소 1개는 남아야 합니다.");
 		        return;
 		    }
-		    e.preventDefault();
-		    $j("#cerTable tbody tr").each(function() {
-		        if($j(this).find("input[type='checkbox']").is(":checked")) {
-		            $j(this).remove();
-		        }
-		    });
+
+		    // 삭제 수행
+		    checkedRows.remove();
+
 		});
 		
 		$j("#saveBt").on("click", function() {
@@ -339,102 +341,103 @@
 
 		    if (birth === "") {
 		        alert("생년월일 입력해주세요.");
+		        $j("input[name='birth']").focus();
 		        return;
 		    }
 		        else if(email === ""){ 
 		        	alert("이메일 입력해주세요.");
+		        	$j("input[name='email']").focus();
 			        return;
 		        }
 		        	else if (addr === ""){
 		        		alert("주소 입력해주세요.");
+		        		$j("input[name='addr']").focus();
 				        return;
 		        	}
 		
-		    
-		    // 학력 필수 검증
-			 var eduValid = true;
-			    $j("#eduTable tbody tr").each(function() {
-			        var row = $j(this);
-			        var start = row.find("[name*='startPeriod']").val().trim();
-			        var end   = row.find("[name*='endPeriod']").val().trim();
-			        var school = row.find("[name*='schoolName']").val().trim();
-			        var major = row.find("[name*='major']").val().trim();
-					var grade = row.find("[name*='grade']").val().trim();
-					 
-			        if (start === "" || end === "" || school === "" || major === "" || grade === "") {
-			            eduValid = false;
-			            return false;
-			        }
-			    });
-    
-			    if (!eduValid) {
-			        alert("학력 입력해주세요.");
-			        return; 
-			 }
+		    	var eduValid = true;
+		    	// 학력 필수 검증
+				$j("#eduTable tbody tr").each(function() {
+				    var row = $j(this);
+				    var fields = [
+				        { name: "startPeriod", msg: "학력 시작기간을 입력해주세요." },
+				        { name: "endPeriod",   msg: "학력 종료기간을 입력해주세요." },
+				        { name: "schoolName",  msg: "학교명을 입력해주세요." },
+				        { name: "major",       msg: "전공을 입력해주세요." },
+				        { name: "grade",       msg: "학점을 입력해주세요." }
+				    ];
+				
+				    for (var i = 0; i < fields.length; i++) {
+				        if (row.find("[name*='" + fields[i].name + "']").val().trim() === "") {
+				            alert(fields[i].msg);
+				            row.find("[name*='" + fields[i].name + "']").focus();
+				            eduValid = false;
+				            return false;
+				        }
+				    }
+				});
 			    
-			    var cerValid = true;
-
-			    $j("#cerTable tbody tr").each(function() {
-			        var row    = $j(this);
-			        var name   = row.find("[name*='qualifiName']").val().trim();
-			        var date   = row.find("[name*='acquDate']").val().trim();
-			        var org    = row.find("[name*='organizeName']").val().trim();
-
-			        if (name !== "" || date !== "" || org !== "") {
-			            if (name === "" || date === "" || org === "") {
-			                cerValid = false;
-			                if (name === "") { row.find("[name*='qualifiName']").focus();  return false; }
-			                if (date === "") { row.find("[name*='acquDate']").focus();     return false; }
-			                if (org === "")  { row.find("[name*='organizeName']").focus(); return false; }
-			                return false;
-			            }
-			        }
-			    });
-			    if (!cerValid) {
-			        alert("자격증 사항을 모두 입력해주세요.");
-			        return;
-			    }
-			    
+				if (!eduValid) return;
+		    	// 필수조건 피하기 위해
 			    var carValid = true;
-			    var carAlerted = false;
 
 			    $j("#carTable tbody tr").each(function() {
 			        var row    = $j(this);
-			        var start   = row.find("[name*='startPeriod']").val().trim();
-			        var end   = row.find("[name*='endPeriod']").val().trim();
-			        var compname    = row.find("[name*='compName']").val().trim();
-			        var task    = row.find("[name*='task']").val().trim();
-			        var location    = row.find("[name*='location']").val().trim();
+			        var carfields = [
+				        { name: "startPeriod", msg: "경력 근무 시작기간을 입력해주세요." },
+				        { name: "endPeriod",   msg: "경력 근무 종료기간을 입력해주세요." },
+				        { name: "compName",  msg: "회사명을 입력해주세요." },
+				        { name: "task",       msg: "부서/직급/직책을 입력해주세요." },
+				        { name: "location",       msg: "지역을 입력해주세요." }
+				    ];
 
-			        if (start !== "" || end !== "" || compname !== "" || task !== "" || location !== "") {
-			            if (start === "" || end === "" || compname === "" || task === "" || location === "") {
-			                carValid = false;
-			                if (!carAlerted) {
-			                    carAlerted = true;
-			                    if (start === "")    { row.find("[name*='startPeriod']").focus(); }
-			                    else if (end === "") { row.find("[name*='endPeriod']").focus(); }
-			                    else if (compname === "") { row.find("[name*='compName']").focus(); }
-			                    else if (task === "") { row.find(".taskInput").focus(); }
-			                    else if (location === "") { row.find("[name*='location']").focus(); }
-			                }
-			                return false;
-			            }
+			     	// 하나라도 입력된 행만 검증
+			        var hasAnyValue = carfields.some(function(f) {
+			            return row.find("[name*='" + f.name + "']").val().trim() !== "";
+			        });
 
-			            if (task.split("/").length < 3) {
-			                carValid = false;
-			                if (!carAlerted) {
-			                    carAlerted = true;
-			                    alert("부서/직급/직책 형식으로 입력해주세요.\n예) 개발팀/대리/팀장");
-			                    row.find(".taskInput").focus();
-			                }
-			                return false;
-			            }
+			        if (!hasAnyValue) return true; // 빈 행 스킵
+			        
+			        for (var i = 0; i < carfields.length; i++) {
+			        	if (row.find("[name*='" + carfields[i].name + "']").val().trim() === "") {
+				            alert(carfields[i].msg);
+				            row.find("[name*='" + carfields[i].name + "']").focus();
+				            carValid = false;
+				            return false;
+				        }
 			        }
 			    });
-			    if (!carValid) {
-			        alert("경력 사항을 모두 입력해주세요.");
-			        return;
-			    }
+
+			    if (!carValid) return;
+			    
+				 // 필수조건 피하기 위해
+			    var cerValid = true;
+
+			    $j("#cerTable tbody tr").each(function() { 
+			        var row    = $j(this);
+			        var cerfields = [
+				        { name: "qualifiName", msg: "자격증명을 입력해주세요." },
+				        { name: "acquDate",   msg: "자격증 취득일을 입력해주세요." },
+				        { name: "organizeName",  msg: "발행처를 입력해주세요." }
+				    ];
+
+			     	// 하나라도 입력된 행만 검증
+			        var hasAnyValue = cerfields.some(function(f) {
+			            return row.find("[name*='" + f.name + "']").val().trim() !== "";
+			        });
+
+			        if (!hasAnyValue) return true; // 빈 행 스킵
+			        
+			        for (var i = 0; i < cerfields.length; i++) {
+				        if (row.find("[name*='" + cerfields[i].name + "']").val().trim() === "") {
+				            alert(cerfields[i].msg);
+				            row.find("[name*='" + cerfields[i].name + "']").focus();
+				            cerValid = false;
+				            return false;
+				        }
+				    }
+			    });
+			    if (!cerValid) return;
 			    
 			// 학력 index 재정렬
 		    $j("#eduTable tbody tr").each(function(i) {
@@ -484,12 +487,40 @@
 		<table align="center">
 			<tr>
 				<td>
-					<table border="1">
+					<table border="1" align="center">
+					<c:choose>
+					<c:when test="${recruit.submit == 'Y'}">
+						<tr>
+							<td align="center">이름</td>
+							<td>${name}</td>
+							<td align="center">생년월일</td>
+							<td>${recruit.birth}</td>
+						</tr>
+						<tr>
+							<td align="center">성별</td>
+							<td>${recruit.gender}</td>
+							<td align="center">연락처</td>
+							<td>${phone}</td>
+						</tr>
+						<tr>
+							<td align="center">email</td>
+							<td>${recruit.email}</td>
+							<td align="center">주소</td>
+							<td>${recruit.addr}</td>
+						</tr>
+						<tr>
+							<td align="center">희망근무지</td>
+							<td>${recruit.location}</td>
+							<td align="center">근무형태</td>
+							<td>${recruit.workType}</td>
+						</tr>
+						</c:when>
+						<c:otherwise>
 						<tr>
 							<td align="center">이름</td>
 							<td><input type="hidden" name="name" value="${name}">${name}</td>
 							<td>생년월일</td>
-							<td><input type="date" name="birth" value="${recruit.birth}">
+							<td><input type="date" name="birth" value="${recruit.birth}" autofocus>
 							</td>
 						</tr>
 						<tr>
@@ -525,8 +556,14 @@
 										${recruit.workType == '계약직' ? 'selected' : ''}>계약직</option>
 							</select></td>
 						</tr>
-					</table> <br> <br> <c:if test="${recruit.submit == 'Y'}">
-						<table border="1">
+						
+						</c:otherwise>
+						
+						</c:choose>
+					</table> <br> <br> 
+					<c:choose>
+					    <c:when test="${recruit.submit == 'Y' || recruit.submit == 'S'}">
+					 	<table border="1" align="center">
 							<tr>
 								<td>학력사항</td>
 								<td>경력사항</td>
@@ -541,18 +578,19 @@
 								<td>${recruit.location}<br>${recruit.workType}</td>
 							</tr>
 						</table>
-					</c:if> <br>
-
+					</c:when>
+					</c:choose>
 					<h2>
 						<strong>학력</strong>
 					</h2>
+				
 					<button type="button" id="eduAdd">추가</button>
 					<button type="button" id="eduDel">삭제</button> <br>
 
 					<table border=1 id="eduTable">
 						<thead>
 							<tr>
-								<td></td>
+								<c:if test = "${recruit.submit != 'Y'}"><td></td></c:if>
 								<td>재학기간</td>
 								<td>구분</td>
 								<td>학교명(소재지)</td>
@@ -564,6 +602,17 @@
 							<c:choose>
 								<c:when test="${not empty educationList}">
 									<c:forEach items="${educationList}" var="edu" varStatus="s">
+										<c:choose>
+										<c:when test="${recruit.submit == 'Y'}">
+										<tr>
+											<td>${edu.startPeriod}<br>~<br>${edu.endPeriod}</td>
+											<td>${edu.division}</td>
+											<td>${edu.schoolName}<br>${edu.location}</td>
+											<td>${edu.major}</td>
+											<td>${edu.grade} / 4.5</td>
+										</tr>
+										</c:when>
+										<c:otherwise>
 										<tr>
 											<td><input type="checkbox"></td>
 											<td><input type="month"
@@ -596,6 +645,8 @@
 												name="educationList[${s.index}].grade" value="${edu.grade}"
 												class="gradeInput">/4.5</td>
 										</tr>
+										</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
@@ -636,7 +687,7 @@
 					<table border=1 id="carTable">
 						<thead>
 							<tr>
-								<td></td>
+								<c:if test="${recruit.submit != 'Y'}"><td></td></c:if>
 								<td>근무기간</td>
 								<td>회사명</td>
 								<td>부서/직급/직책</td>
@@ -647,6 +698,16 @@
 							<c:choose>
 								<c:when test="${not empty careerList}">
 									<c:forEach items="${careerList}" var="car" varStatus="k">
+									<c:choose>
+										<c:when test="${recruit.submit == 'Y'}">
+										<tr>
+											<td>${car.startPeriod} ~<br> ${car.endPeriod}</td>
+											<td>${car.compName}</td>
+											<td>${car.task}</td>
+											<td>${car.location}</td>
+										</tr>
+										</c:when>
+										<c:otherwise>
 										<tr>
 											<td><input type="checkbox"></td>
 											<td><input name="careerList[${k.index}].startPeriod"
@@ -660,6 +721,8 @@
 											<td><input name="careerList[${k.index}].location"
 												type="text" value="${car.location}"></td>
 										</tr>
+										</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
@@ -688,7 +751,7 @@
 					<table border=1 id="cerTable">
 						<thead>
 							<tr>
-								<td></td>
+								<c:if test="${recruit.submit != 'Y'}"><td></td></c:if>
 								<td>자격증명</td>
 								<td>취득일</td>
 								<td>발행처</td>
@@ -698,17 +761,31 @@
 							<c:choose>
 								<c:when test="${not empty certificateList}">
 									<c:forEach items="${certificateList}" var="cer" varStatus="w">
+										<c:choose>
+										<c:when test="${recruit.submit == 'Y'}">
 										<tr>
+											<td>${cer.qualifiName}</td>
+											<td>${cer.acquDate}</td>
+											<td>${cer.organizeName}</td>
+										</tr>
+										</c:when>
+										<c:otherwise>
+										<tr>
+										 <input type="hidden"
+									           name="certificateList[${w.index}].certSeq"
+									           value="${cer.certSeq}">
 											<td><input type="checkbox"></td>
 											<td><input
 												name="certificateList[${w.index}].qualifiName" type="text"
 												value="${cer.qualifiName}"></td>
 											<td><input name="certificateList[${w.index}].acquDate"
-												type="date" value="${cer.acquDate}"></td>
+												type="month" value="${cer.acquDate}"></td>
 											<td><input
 												name="certificateList[${w.index}].organizeName" type="text"
 												value="${cer.organizeName}"></td>
 										</tr>
+										</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
@@ -716,7 +793,7 @@
 										<td><input type="checkbox"></td>
 										<td><input name="certificateList[0].qualifiName"
 											type="text"></td>
-										<td><input name="certificateList[0].acquDate" type="date">
+										<td><input name="certificateList[0].acquDate" type="month">
 										</td>
 										<td><input name="certificateList[0].organizeName"
 											type="text"></td>
