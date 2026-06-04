@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.career.dao.CareerDao;
 import com.spring.career.vo.CareerVo;
@@ -36,4 +37,19 @@ public class CareerDaoImpl implements CareerDao{
 	public List<CareerVo> getCareer(String seq) throws Exception {
 	    return sqlSession.selectList("career.getCareerList", seq);
 	}
+	
+	@Override
+    public int updateCareerList(CareerVo vo) {
+        return sqlSession.update("career.updateCareerList", vo);
+    }
+
+    @Override
+    public void deleteCareerByCarSeq(CareerVo vo) {
+         sqlSession.delete("career.deleteCareerByCertSeq", vo);
+    }
+    
+    @Override
+    public void insertCareer(CareerVo vo) throws Exception {
+    	sqlSession.insert("career.insertCareer", vo);
+    }
 }

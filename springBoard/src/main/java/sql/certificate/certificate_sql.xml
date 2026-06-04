@@ -9,6 +9,10 @@
 	    <result property="organizeName" column="ORGANIZE_NAME"/>
 	 </resultMap>
     
+    <insert id="insertCertificate" parameterType="com.spring.certificate.vo.CertificateVo">
+	    INSERT INTO CERTIFICATE (CERT_SEQ, SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)
+	    VALUES (CERT_SEQ.NEXTVAL, #{seq}, #{qualifiName}, #{acquDate}, #{organizeName})
+	</insert>
     <!-- 자격증을 넣기위한 쿼리문 -->
      <insert id="insertCertificateList" parameterType="com.spring.certificate.vo.CertificateVo">
         INSERT INTO CERTIFICATE (CERT_SEQ, SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)

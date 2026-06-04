@@ -13,4 +13,10 @@ public interface CareerDao {
 
 	public List<CareerVo> getCareer(String seq) throws Exception;
 
+	public int updateCareerList(CareerVo vo)  throws Exception;
+
+	public void deleteCareerByCarSeq(CareerVo vo) throws Exception;
+
+	public void insertCareer(CareerVo vo) throws Exception;
+
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.spring.career.vo.CareerVo;
 import com.spring.education.vo.EducationVo;
 
 @Service
@@ -15,4 +16,5 @@ public interface educationService {
 
 	public List<EducationVo> getEducation(String seq) throws Exception;
 
+	public void syncEducationList(String seq, List<EducationVo> educationList) throws Exception;
 }

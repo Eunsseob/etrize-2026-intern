@@ -20,4 +20,6 @@ public interface RecruitDao {
 	public void submitRecruit(String seq) throws Exception;
 
 	public int phoneCheck(RecruitVo recruitVo) throws Exception;
+
+	public int mergeUser(RecruitVo recruitVo) throws Exception;
 }

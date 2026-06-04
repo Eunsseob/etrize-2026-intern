@@ -12,4 +12,10 @@ public interface EducationDao {
 	public void deleteEducation(String seq) throws Exception;
 	
 	public List<EducationVo> getEducation(String seq) throws Exception;
+
+	public int updateEducationList(EducationVo vo) throws Exception;
+
+	public void deleteEducationByEduSeq(EducationVo vo) throws Exception;
+
+	public void insertEducation(EducationVo vo) throws Exception;
 }

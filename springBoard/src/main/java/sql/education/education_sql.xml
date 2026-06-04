@@ -19,14 +19,14 @@
 	    INSERT INTO EDUCATION (EDU_SEQ, SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
 	    VALUES (
 	        EDU_SEQ.NEXTVAL,
-	        #{seq, jdbcType=VARCHAR},
-	        #{schoolName, jdbcType=VARCHAR},
-	        #{division, jdbcType=VARCHAR},
-	        #{startPeriod, jdbcType=VARCHAR},
-	        #{endPeriod, jdbcType=VARCHAR},
-	        #{major, jdbcType=VARCHAR},
-	        #{grade, jdbcType=VARCHAR},
-	        #{location, jdbcType=VARCHAR}
+	        #{seq},
+	        #{schoolName},
+	        #{division},
+	        #{startPeriod},
+	        #{endPeriod},
+	        #{major},
+	        #{grade},
+	        #{location}
 	    )
 	</insert>
     
@@ -39,4 +39,20 @@
 	<select id="getEducationList" parameterType="String" resultMap="educationVo">
 	    SELECT * FROM EDUCATION WHERE SEQ = #{seq}
 	</select>
+	
+	<update id="updateEducationList" parameterType="com.spring.education.vo.EducationVo">
+	    UPDATE EDUCATION 
+	    SET SCHOOL_NAME = #{schoolName}, 
+	        DIVISION = #{division}, 
+	        START_PERIOD = #{startPeriod},
+	        END_PERIOD = #{endPeriod},
+	        MAJOR = #{major},
+	        GRADE = #{grade},
+	        LOCATION = #{location}
+	    WHERE EDU_SEQ = #{eduSeq}
+	</update>
+	
+	<delete id="deleteEducationByEduSeq" parameterType="com.spring.education.vo.EducationVo">
+	    DELETE FROM EDUCATION WHERE EDU_SEQ = #{eduSeq}
+	</delete>
 </mapper>

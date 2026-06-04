@@ -14,5 +14,7 @@ public interface CertificateDao {
 
 	public int updateCertificateList(CertificateVo vo) throws Exception;
 	
-    public int deleteCertificateByCertSeq(String certSeq) throws Exception;
+    public void deleteCertificateByCertSeq(CertificateVo vo) throws Exception;
+    
+    public void insertCertificate(CertificateVo vo) throws Exception;
 }

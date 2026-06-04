@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.spring.career.vo.CareerVo;
 import com.spring.education.dao.EducationDao;
 import com.spring.education.vo.EducationVo;
 import com.spring.recruit.dao.RecruitDao;
@@ -33,4 +34,19 @@ public class EducationDaoImpl implements EducationDao{
 	public List<EducationVo> getEducation(String seq) throws Exception{
 		return sqlSession.selectList("education.getEducationList", seq);
 	}
+	
+	@Override
+    public int updateEducationList(EducationVo vo) {
+        return sqlSession.update("education.updateEducationList", vo);
+    }
+
+    @Override
+    public void deleteEducationByEduSeq(EducationVo vo) {
+         sqlSession.delete("education.deleteEducationByEduSeq", vo);
+    }
+    
+    @Override
+    public void insertEducation(EducationVo vo) throws Exception {
+    	sqlSession.insert("education.insertEducation", vo);
+    }
 }

@@ -55,4 +55,10 @@ public class RecruitDaoImpl implements RecruitDao{
 	public int phoneCheck(RecruitVo recruitVo) throws Exception {
 		return sqlSession.selectOne("recruit.numberCheck", recruitVo);
 	}
+
+	@Override
+	public int mergeUser(RecruitVo recruitVo) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

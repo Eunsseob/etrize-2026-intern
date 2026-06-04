@@ -12,6 +12,19 @@
 	    <result property="task" column="TASK"/>
 	 </resultMap>
 	
+	<insert id="insertCareer" parameterType="com.spring.career.vo.CareerVo">
+	    INSERT INTO CAREER (CAR_SEQ, SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK)
+	    VALUES (
+            CAR_SEQ.NEXTVAL,
+            #{seq},
+            #{compName},
+            #{location},
+            #{startPeriod},
+            #{endPeriod},
+            #{task}
+        	)
+	</insert>
+	
 	<!-- 경력을 넣기위한 쿼리문 -->
      <insert id="insertCareerList" parameterType="com.spring.career.vo.CareerVo">
         INSERT 
@@ -36,4 +49,18 @@
 	<select id="getCareerList" parameterType="String" resultMap="careerVo">
 	    SELECT * FROM CAREER WHERE SEQ = #{seq}
 	</select>
+	
+	<update id="updateCareerList" parameterType="com.spring.certificate.vo.CertificateVo">
+	    UPDATE CAREER 
+	    SET COMP_NAME = #{compName}, 
+	        LOCATION = #{location}, 
+	        START_PERIOD = #{startPeriod},
+	        END_PERIOD = #{endPeriod},
+	        TASK = #{task}
+	    WHERE CAR_SEQ = #{carSeq}
+	</update>
+	
+	<delete id="deleteCareerByCertSeq" parameterType="com.spring.career.vo.CareerVo">
+	    DELETE FROM CAREER WHERE CAR_SEQ = #{carSeq}
+	</delete>
 </mapper>

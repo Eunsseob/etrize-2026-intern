@@ -30,4 +30,5 @@ public interface recruitService {
 	public int phoneCheck(RecruitVo recruitVo) throws Exception;
 	
 	public void updateAllRecruitInfo(String seq, RecruitVo recruitVo) throws Exception;
+
 }

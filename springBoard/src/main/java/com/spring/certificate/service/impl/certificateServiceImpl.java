@@ -46,12 +46,26 @@ public class certificateServiceImpl implements certificateService{
                 if (uiCer.getQualifiName() == null || uiCer.getQualifiName().trim().isEmpty()) continue;
 
                 if (uiCer.getCertSeq() != null && !uiCer.getCertSeq().isEmpty()) {
-                    // [UPDATE] 기존 데이터라면 수정
-                	certificateDao.updateCertificateList(uiCer);
+                    // DB 리스트에서 같은 certSeq 찾기
+                    CertificateVo dbCer = null;
+                    for (CertificateVo d : dbList) {
+                        if (d.getCertSeq().equals(uiCer.getCertSeq())) {
+                            dbCer = d;
+                            break;
+                        }
+                    }
+                    // 다를 때만 UPDATE
+                    if (dbCer != null && (
+                        !uiCer.getQualifiName().equals(dbCer.getQualifiName()) ||
+                        !uiCer.getAcquDate().equals(dbCer.getAcquDate()) ||
+                        !uiCer.getOrganizeName().equals(dbCer.getOrganizeName())
+                    )) {
+                        certificateDao.updateCertificateList(uiCer);
+                    }
                 } else {
-                    // [INSERT] 새로운 데이터라면 등록
+                    // [INSERT]
                     uiCer.setSeq(seq);
-                    certificateDao.insertCertificateList(dbList);
+                    certificateDao.insertCertificate(uiCer);
                 }
             }
         }
@@ -71,7 +85,7 @@ public class certificateServiceImpl implements certificateService{
                 }
                 if (!isExist) {
                     // 화면에서 삭제된 항목이므로 DB에서 삭제
-                	certificateDao.deleteCertificateByCertSeq(seq);
+                	certificateDao.deleteCertificateByCertSeq(dbCer);
                 }
             }
         }

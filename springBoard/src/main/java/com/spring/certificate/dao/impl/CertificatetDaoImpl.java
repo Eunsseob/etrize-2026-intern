@@ -42,7 +42,12 @@ public class CertificatetDaoImpl implements CertificateDao{
     }
 
     @Override
-    public int deleteCertificateByCertSeq(String certSeq) {
-        return sqlSession.delete("certificate.deleteCertificateByCertSeq", certSeq);
+    public void deleteCertificateByCertSeq(CertificateVo vo) {
+         sqlSession.delete("certificate.deleteCertificateByCertSeq", vo);
+    }
+    
+    @Override
+    public void insertCertificate(CertificateVo vo) throws Exception {
+    	sqlSession.insert("certificate.insertCertificate", vo);
     }
 }

@@ -11,4 +11,6 @@ public interface certificateService {
 	public void deleteCertificate(String seq) throws Exception;
 
 	public List<CertificateVo> getCertificate(String seq) throws Exception;
+
+	public void syncCertificateList(String seq, List<CertificateVo> certificateList) throws Exception;
 }
