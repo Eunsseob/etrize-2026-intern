@@ -76,7 +76,7 @@
 					</tr>
 					<tr>
 						<th>휴대폰번호</th>
-						<th><input type="text" name="phone" value="${recruit.phone}", oninput="autoHyphen(this)" minlength="11" maxlength="13" autofocus></th>
+						<th><input type="text" name="phone" value="${recruit.phone}", oninput="autoHyphen(this)" minlength="11" maxlength="13" placeholder="전화번호는 11자리 입력" autofocus></th>
 					</tr>
 					<tr>
 						<th colspan=2>	
