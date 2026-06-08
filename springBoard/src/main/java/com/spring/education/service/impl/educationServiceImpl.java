@@ -37,13 +37,13 @@ public class educationServiceImpl implements educationService{
 	
 	@Transactional(rollbackFor = Exception.class)
     public void syncEducationList(String seq, List<EducationVo> uiList) throws Exception {
-        // 1. 현재 DB에 저장된 전체 리스트를 가져옴
+        // 현재 DB에 저장된 전체 리스트를 가져옴
         List<EducationVo> dbList = educationDao.getEducation(seq);
 
-        // 2. [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
+        // [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
         if (uiList != null) {
             for (EducationVo uiCer : uiList) {
-                // 이름이 없으면 빈 행으로 간주하고 건너뜀
+                // 이름이 없으면 빈 행으로 간주하고 건너뛰기
                 if (uiCer.getMajor() == null || uiCer.getMajor().trim().isEmpty()) continue;
 
                 if (uiCer.getEduSeq() != null && !uiCer.getEduSeq().isEmpty()) {
@@ -68,14 +68,14 @@ public class educationServiceImpl implements educationService{
                     	educationDao.updateEducationList(uiCer);
                     }
                 } else {
-                    // [INSERT]
+                    // INSERT
                     uiCer.setSeq(seq);
                     educationDao.insertEducation(uiCer);
                 }
             }
         }
 
-        // 3. [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
+        // [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
         if (dbList != null) {
             for (EducationVo dbCer : dbList) {
                 boolean isExist = false;

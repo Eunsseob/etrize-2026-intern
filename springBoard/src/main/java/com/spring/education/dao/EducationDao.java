@@ -18,4 +18,6 @@ public interface EducationDao {
 	public void deleteEducationByEduSeq(EducationVo vo) throws Exception;
 
 	public void insertEducation(EducationVo vo) throws Exception;
+
+	public void syncEducationList(String seq, List<EducationVo> educationList);
 }

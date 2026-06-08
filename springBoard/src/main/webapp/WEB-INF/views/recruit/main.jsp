@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+
 <title>Insert title here</title>
 </head>
 <script>
@@ -17,40 +18,34 @@ $j(document).ready(function() {
     var isAlerting = false;
 
     // 학력 기간 로직
-    $j(document).on("blur", ".eduPeriod", function() {
+    $j(document).on("input", ".eduPeriod", function() {
         var row   = $j(this).closest("tr");
         var start = row.find(".eduPeriod:first").val().trim();
         var end   = row.find(".eduPeriod:last").val().trim();
 
+     	// 에러 초기화 (row 범위 밖도 커버)
+        row.find(".eduPeriod").css("border", "");
+        row.find(".eduError").text("");
+        // 혹시 다음 tr에 에러 표시하는 구조면 아래도 추가
+        row.next(".eduErrorRow").find(".eduError").text("");
+        
         if (start === "" || end === "") return;
 
         // 생년월일 비교
         var birth = $j("input[name='birth']").val().trim();
         if (birth && start < birth.substring(0, 7)) {
-            $j(this).css("border", "1px solid red");
-            if (!isAlerting) {
-                isAlerting = true;
-                alert("재학 시작기간이 생년월일보다 빠를 수 없습니다.");
-                isAlerting = false;
-            }
+            row.find(".eduPeriod:first").css("border", "1px solid red");
+            row.find(".eduError").text("재학 시작기간이 생년월일보다 빠를 수 없습니다.");
             return;
-        } else {
-            $j(this).css("border", "");
-        }
-
+        } 
+        
         // 시작 > 끝 체크
         if (start > end) {
-            $j(this).css("border", "1px solid red");
-            if (!isAlerting) {
-                isAlerting = true;
-                alert("시작일이 종료일보다 늦습니다.");
-                isAlerting = false;
-            }
+        	row.find(".eduPeriod").css("border", "1px solid red");
+            row.find(".eduError").text("시작일이 종료일보다 늦습니다.");
             return;
-        } else {
-            $j(this).css("border", "");
-        }
-
+        } 
+        
         // 학력 겹침
         var overlap = false;
         $j("#eduTable tbody tr").not(row).each(function() {
@@ -62,11 +57,8 @@ $j(document).ready(function() {
             }
         });
         if (overlap) {
-            if (!isAlerting) {
-                isAlerting = true;
-                alert("학력기간이 겹칩니다.");
-                isAlerting = false;
-            }
+        	row.find(".eduPeriod").css("border", "1px solid red");
+            row.find(".eduError").text("학력기간이 겹칩니다.");
             return;
         }
 
@@ -80,17 +72,18 @@ $j(document).ready(function() {
             }
         });
         if (overlap) {
-            if (!isAlerting) {
-                isAlerting = true;
-                alert("재학기간과 근무기간이 겹칩니다.");
-                isAlerting = false;
-            }
+        	$j(this).css("border", "1px solid red");
+            row.find(".eduError").text("재학기간과 근무기간이 겹칩니다.");
             return;
         }
+        
+        // 정상
+        $j(this).css("border", "");
+        row.find(".eduError").text("");
     });
 
     // 경력 기간 로직
-    $j(document).on("blur", ".carPeriod", function() {
+    $j(document).on("input", ".carPeriod", function() {
         var row   = $j(this).closest("tr");
         var start = row.find(".carPeriod:first").val().trim();
         var end   = row.find(".carPeriod:last").val().trim();
@@ -156,20 +149,19 @@ $j(document).ready(function() {
     });
 
     // 자격증 기간 로직
-    $j(document).on("blur", ".acquDate", function() {
+    $j(document).on("input", ".acquDate", function() {
         var row  = $j(this).closest("tr");
         var acqu = row.find(".acquDate").val().trim();
 
+        row.find(".acquDate").css("border", "");
+        row.find(".acquError").text("");
+        
         if (acqu === "") return;
 
         var birth = $j("input[name='birth']").val().trim();
         if (birth && acqu < birth.substring(0, 7)) {
-            $j(this).css("border", "1px solid red");
-            if (!isAlerting) {
-                isAlerting = true;
-                alert("자격증 취득일이 생년월일보다 빠를 수 없습니다.");
-                isAlerting = false;
-            }
+        	$j(this).css("border", "1px solid red");
+            row.find(".acquError").text("자격증 취득일이 생년월일보다 빠를 수 없습니다.");
             return;
         } else {
             $j(this).css("border", "");
@@ -197,40 +189,53 @@ $j(document).ready(function() {
     });
 
     // 부서/직급/직책
-    $j(document).on("blur", ".taskInput", function() {
-        var val = $j(this).val().trim();
-        if (val === "") return;
-
+    $j(document).on("input", ".taskInput", function() {
+    	var val = $j(this).val().trim();
+        if (val === "") {
+            $j(this).css("border", "");
+            $j(this).closest("td").find(".taskError").text("");
+            return;
+        }
         if (val.split("/").length !== 3) {
             $j(this).css("border", "1px solid red");
-            $j(this).attr("placeholder", "예) 개발팀/대리/팀장");
+            $j(this).closest("td").find(".taskError").text("예) 개발팀/대리/팀장 형식으로 입력하세요.");
         } else {
             $j(this).css("border", "");
-            $j(this).attr("placeholder", "");
+            $j(this).closest("td").find(".taskError").text("");
         }
     });
-
+    
     // 이메일
-    $j(document).on("blur", ".emailInput", function() {
+    $j(document).on("input", ".emailInput", function() {
         var val = $j(this).val().trim();
-        if (val === "") return;
-
+        if (val === "") {
+            $j(this).css("border", "");
+            $j(this).closest("td").find(".emailError").text("");
+            return;
+        }
         if (val.split("@").length !== 2) {
             $j(this).css("border", "1px solid red");
+            $j(this).closest("td").find(".emailError").text("예) example@com");
         } else {
             $j(this).css("border", "");
+            $j(this).closest("td").find(".emailError").text("");
         }
     });
 
     // 학점
-    $j(document).on("blur", ".gradeInput", function() {
+    $j(document).on("input", ".gradeInput", function() {
         var val = $j(this).val().trim();
-        if (val === "") return;
-
+        if (val === "") {
+            $j(this).css("border", "");
+            $j(this).closest("td").find(".gradeError").text("");
+            return;
+        }
         if (val < 0 || val > 4.5) {
             $j(this).css("border", "1px solid red");
+            $j(this).closest("td").find(".gradeError").text("학점은 0 ~ 4.5 입력");
         } else {
             $j(this).css("border", "");
+            $j(this).closest("td").find(".gradeError").text("");
         }
     });
 
@@ -243,27 +248,28 @@ $j(document).ready(function() {
                 <input type="hidden" name="educationList[${idx}].eduSeq" value="">
                 <td><input type="checkbox" name="eduCheck"></td>
                 <td>
-                    <input type="month" name="educationList[${idx}].startPeriod" class="eduPeriod"><br>
-                    ~<br>
-                    <input type="month" name="educationList[${idx}].endPeriod" class="eduPeriod">
+                    <input type="month" name="educationList[${idx}].startPeriod" class="eduPeriod">
+                    ~ <input type="month" name="educationList[${idx}].endPeriod" class="eduPeriod">
+                    <br><span class="eduError" style="color:red; font-size:12px;"></span>
                 </td>
                 <td>
-                    <select name="educationList[${idx}].division">
-                        <option value="재학">재학</option>
-                        <option value="중퇴">중퇴</option>
-                        <option value="졸업">졸업</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" name="educationList[${idx}].schoolName"><br>
-                    <select name="educationList[${idx}].location">
-                        <option value="서울">서울</option>
-                        <option value="경기">경기</option>
-                        <option value="지방">지방</option>
-                    </select>
-                </td>
+	                <select name="educationList[${idx}].division">
+	                    <c:forEach var="divOption" items="${divisions}">
+	                        <option value="${divOption}">${divOption}</option>
+	                    </c:forEach>
+	                </select>
+	            </td>
+	            <td>
+	                <input type="text" name="educationList[${idx}].schoolName"><br>
+	                <select name="educationList[${idx}].location">
+	                    <c:forEach var="loc" items="${locations}">
+	                        <option value="${loc}">${loc}</option>
+	                    </c:forEach>
+	                </select>
+	            </td>
                 <td><input type="text" name="educationList[${idx}].major"></td>
-                <td><input type="text" name="educationList[${idx}].grade" class="gradeInput" placeholder="ex) 0 ~ 4.5">/4.5</td>
+                <td><input type="text" name="educationList[${idx}].grade" class="gradeInput" placeholder="ex) 0 ~ 4.5">/4.5
+				<br><span class="gradeError" style="color:red; font-size:12px;"></span></td>
             </tr>
         `);
     });
@@ -278,12 +284,12 @@ $j(document).ready(function() {
                 <td><input type="checkbox" name="carCheck"></td>
                 <td>
                     <input type="month" name="careerList[${idx}].startPeriod" class="carPeriod">
-                    ~<br>
-                    <input type="month" name="careerList[${idx}].endPeriod" class="carPeriod">
+                     ~ <input type="month" name="careerList[${idx}].endPeriod" class="carPeriod">
                     <br><span class="carError" style="color:red; font-size:12px;"></span>
                 </td>
                 <td><input type="text" name="careerList[${idx}].compName"></td>
-                <td><input type="text" name="careerList[${idx}].task" class="taskInput" placeholder="예) 개발팀/대리/팀장"></td>
+                <td><input type="text" name="careerList[${idx}].task" class="taskInput" placeholder="예) 개발팀/대리/팀장">
+        		<br><span class="taskError" style="color:red; font-size:12px;"></span></td>
                 <td><input type="text" name="careerList[${idx}].location"></td>
             </tr>
         `);
@@ -298,7 +304,8 @@ $j(document).ready(function() {
                 <input type="hidden" name="certificateList[${idx}].certSeq" value="">
                 <td><input type="checkbox" name="cerCheck"></td>
                 <td><input type="text" name="certificateList[${idx}].qualifiName"></td>
-                <td><input type="month" name="certificateList[${idx}].acquDate" class="acquDate"></td>
+                <td><input type="month" name="certificateList[${idx}].acquDate" class="acquDate">
+                <br><span class="carError" style="color:red; font-size:12px;"></span></td>
                 <td><input type="text" name="certificateList[${idx}].organizeName"></td>
             </tr>
         `);
@@ -317,24 +324,25 @@ $j(document).ready(function() {
                 <tr>
                     <td><input type="checkbox" name="eduCheck"></td>
                     <td>
-                        <input name="educationList[0].startPeriod" type="month" class="eduPeriod"> ~<br>
+                        <input name="educationList[0].startPeriod" type="month" class="eduPeriod"> ~ 
                         <input name="educationList[0].endPeriod" type="month" class="eduPeriod">
+                        <br><span class="eduError" style="color:red; font-size:12px;"></span>
                     </td>
                     <td>
-                        <select name="educationList[0].division">
-                            <option value="재학">재학</option>
-                            <option value="중퇴">중퇴</option>
-                            <option value="졸업">졸업</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input name="educationList[0].schoolName" type="text"><br>
-                        <select name="educationList[0].location">
-                            <option value="서울">서울</option>
-                            <option value="경기">경기</option>
-                            <option value="지방">지방</option>
-                        </select>
-                    </td>
+	                    <select name="educationList[0].division">
+	                        <c:forEach var="divOption" items="${divisions}">
+	                            <option value="${divOption}">${divOption}</option>
+	                        </c:forEach>
+	                    </select>
+	                </td>
+	                <td>
+	                    <input name="educationList[0].schoolName" type="text"><br>
+	                    <select name="educationList[0].location">
+	                        <c:forEach var="loc" items="${locations}">
+	                            <option value="${loc}">${loc}</option>
+	                        </c:forEach>
+	                    </select>
+	                </td>
                     <td><input name="educationList[0].major" type="text"></td>
                     <td><input name="educationList[0].grade" type="text" class="gradeInput">/4.5</td>
                 </tr>
@@ -357,7 +365,7 @@ $j(document).ready(function() {
                 <tr>
                     <td><input type="checkbox" name="carCheck"></td>
                     <td>
-                        <input name="careerList[0].startPeriod" type="month" class="carPeriod"> ~<br>
+                        <input name="careerList[0].startPeriod" type="month" class="carPeriod"> ~ 
                         <input name="careerList[0].endPeriod" type="month" class="carPeriod">
                         <br><span class="carError" style="color:red; font-size:12px;"></span>
                     </td>
@@ -384,7 +392,8 @@ $j(document).ready(function() {
                 <tr>
                     <td><input type="checkbox" name="cerCheck"></td>
                     <td><input name="certificateList[0].qualifiName" type="text"></td>
-                    <td><input name="certificateList[0].acquDate" type="month" class="acquDate"></td>
+                    <td><input name="certificateList[0].acquDate" type="month" class="acquDate">
+                    <br><span class="acquError" style="color:red; font-size:12px;"></span></td>
                     <td><input name="certificateList[0].organizeName" type="text"></td>
                 </tr>
             `);
@@ -500,12 +509,58 @@ $j(document).ready(function() {
         });
 
         if (!periodValid) {
-            alert("재학/근무 시작기간이 생년월일보다 빠를 수 없습니다.");
+            alert("재학 시작기간이 생년월일보다 빠를 수 없습니다.");
             return;
         }
 
         if (!carValid) return;
 
+    	// 학력 겹침 체크
+        var eduOverlap = false;
+        var eduRows = $j("#eduTable tbody tr");
+        eduRows.each(function(i) {
+            var s1 = $j(this).find("[name*='startPeriod']").val().trim();
+            var e1 = $j(this).find("[name*='endPeriod']").val().trim();
+            if (!s1 || !e1) return;
+            eduRows.each(function(j) {
+                if (i >= j) return;
+                var s2 = $j(this).find("[name*='startPeriod']").val().trim();
+                var e2 = $j(this).find("[name*='endPeriod']").val().trim();
+                if (s2 && e2 && s1 <= e2 && s2 <= e1) {
+                    eduOverlap = true;
+                    return false;
+                }
+            });
+            if (eduOverlap) return false;
+        });
+        if (eduOverlap) {
+            alert("학력 기간이 겹칩니다.");
+            $j("#eduTable tbody tr").first().find("[name*='startPeriod']").focus();
+            return;
+        }
+
+        // 학력-경력 겹침 체크
+        var periodOverlap = false;
+        $j("#eduTable tbody tr").each(function() {
+            var s1 = $j(this).find("[name*='startPeriod']").val().trim();
+            var e1 = $j(this).find("[name*='endPeriod']").val().trim();
+            if (!s1 || !e1) return;
+            $j("#carTable tbody tr").each(function() {
+                var s2 = $j(this).find("[name*='startPeriod']").val().trim();
+                var e2 = $j(this).find("[name*='endPeriod']").val().trim();
+                if (s2 && e2 && s1 <= e2 && s2 <= e1) {
+                    periodOverlap = true;
+                    return false;
+                }
+            });
+            if (periodOverlap) return false;
+        });
+        if (periodOverlap) {
+            alert("재학기간과 근무기간이 겹칩니다.");
+            $j("#carTable tbody tr").first().find("[name*='startPeriod']").focus();
+            return;
+        }
+        
         // 자격증 검증
         var cerValid = true;
         $j("#cerTable tbody tr").each(function() {
@@ -539,7 +594,7 @@ $j(document).ready(function() {
 
         if (!cerValid) return;
         if (!periodValid) {
-            alert("재학/근무 시작기간 또는 자격증 취득일이 생년월일보다 빠를 수 없습니다.");
+            alert("자격증 취득일이 생년월일보다 빠를 수 없습니다.");
             return;
         }
 
@@ -621,18 +676,19 @@ $j(document).ready(function() {
 								<tr>
 									<td align="center">이름</td>
 									<td><input type="hidden" name="name" value="${name}">${name}</td>
-									<td>생년월일</td>
+									<td align="center">생년월일</td>
 									<td><input type="date" name="birth"
 										value="${recruit.birth}" autofocus></td>
 								</tr>
 								<tr>
-									<td>성별</td>
-									<td><select name="gender">
-											<option value="남자"
-												${recruit.gender == '남자' ? 'selected' : ''}>남자</option>
-											<option value="여자"
-												${recruit.gender == '여자' ? 'selected' : ''}>여자</option>
-									</select></td>
+									<td align="center">성별</td>
+									<td>
+									    <select name="gender">
+									        <c:forEach var="gender" items="${genders}">
+									            <option value="${gender}" ${recruit.gender == gender ? 'selected' : ''}>${gender}</option>
+									        </c:forEach>
+									    </select>
+									</td>
 									<td align="center">연락처</td>
 									<td><input type="hidden" name="phone" value="${phone}">${phone}</td>
 								</tr>
@@ -640,27 +696,30 @@ $j(document).ready(function() {
 									<td align="center">email</td>
 									<td><input type="email" name="email"
 										value="${recruit.email}" class="emailInput"
-										placeholder="예) example@com"> <span class="emailError"
+										placeholder="예) example@com"> 
+										<br><span class="emailError"
 										style="color: red; font-size: 12px;"></span></td>
-									<td>주소</td>
+									<td align="center">주소</td>
 									<td><input type="text" name="addr" value="${recruit.addr}">
 									</td>
 								</tr>
 								<tr>
 									<td>희망근무지</td>
-									<td><select name="location">
-											<option value="서울"
-												${recruit.location == '서울' ? 'selected' : ''}>서울</option>
-											<option value="전국"
-												${recruit.location == '전국' ? 'selected' : ''}>전국</option>
-									</select></td>
+									<td>
+									    <select name="location">
+									        <c:forEach var="loc" items="${locations}">
+									            <option value="${loc}" ${recruit.location == loc ? 'selected' : ''}>${loc}</option>
+									        </c:forEach>
+									    </select>
+									</td>
 									<td>근무형태</td>
-									<td><select name="workType">
-											<option value="정규직"
-												${recruit.workType == '정규직' ? 'selected' : ''}>정규직</option>
-											<option value="계약직"
-												${recruit.workType == '계약직' ? 'selected' : ''}>계약직</option>
-									</select></td>
+									<td>
+									    <select name="workType">
+									        <c:forEach var="wt" items="${workTypes}">
+									            <option value="${wt}" ${recruit.workType == wt ? 'selected' : ''}>${wt}</option>
+									        </c:forEach>
+									    </select>
+									</td>
 								</tr>
 
 							</c:otherwise>
@@ -670,17 +729,16 @@ $j(document).ready(function() {
 						<c:when test="${recruit.submit == 'Y' || recruit.submit == 'S'}">
 							<table border="1" align="center">
 								<tr>
-									<td>학력사항</td>
-									<td>경력사항</td>
-									<td>희망연봉</td>
-									<td>희망근무지/근무형태</td>
+									<td align="center">학력사항</td>
+									<td align="center">경력사항</td>
+									<td align="center">희망연봉</td>
+									<td align="center">희망근무지/근무형태</td>
 								</tr>
 								<tr>
-									<td>대학교(${eduPeriod}) ${educationList[0].division}</td>
-									<td>경력 ${carPeriod}</td>
-
-									<td>회사내규에 따름</td>
-									<td>${recruit.location}<br>${recruit.workType}</td>
+									<td align="center">${eduPeriod} ${educationList[0].division}</td>
+									<td align="center">경력 ${carPeriod}</td>
+									<td align="center">회사내규에 따름</td>
+									<td align="center">${recruit.location} / ${recruit.workType}</td>
 								</tr>
 							</table>
 						</c:when>
@@ -698,11 +756,11 @@ $j(document).ready(function() {
 								<c:if test="${recruit.submit != 'Y'}">
 									<td></td>
 								</c:if>
-								<td>재학기간</td>
-								<td>구분</td>
-								<td>학교명(소재지)</td>
-								<td>전공</td>
-								<td>학점</td>
+								<td align="center">재학기간</td>
+								<td align="center">구분</td>
+								<td align="center">학교명(소재지)</td>
+								<td align="center">전공</td>
+								<td align="center">학점</td>
 							</tr>
 						</thead>
 						<tbody>
@@ -712,9 +770,9 @@ $j(document).ready(function() {
 										<c:choose>
 											<c:when test="${recruit.submit == 'Y'}">
 												<tr>
-													<td>${edu.startPeriod}<br>~<br>${edu.endPeriod}</td>
+													<td>${edu.startPeriod} ~ ${edu.endPeriod}</td>
 													<td>${edu.division}</td>
-													<td>${edu.schoolName}<br>${edu.location}</td>
+													<td>${edu.schoolName} (${edu.location})</td>
 													<td>${edu.major}</td>
 													<td>${edu.grade}/4.5</td>
 												</tr>
@@ -726,69 +784,72 @@ $j(document).ready(function() {
 														value="${edu.eduSeq}"></td>
 													<td><input type="month"
 														name="educationList[${s.index}].startPeriod"
-														value="${edu.startPeriod}" class="eduPeriod"><br>~<br>
+														value="${edu.startPeriod}" class="eduPeriod"> ~ 
 														<input type="month"
 														name="educationList[${s.index}].endPeriod"
-														value="${edu.endPeriod}" class="eduPeriod"></td>
-													<td><select name="educationList[${s.index}].division">
-															<option value="재학"
-																${edu.division == '재학' ? 'selected' : ''}>재학</option>
-															<option value="중퇴"
-																${edu.division == '중퇴' ? 'selected' : ''}>중퇴</option>
-															<option value="졸업"
-																${edu.division == '졸업' ? 'selected' : ''}>졸업</option>
-													</select></td>
-													<td><input type="text"
-														name="educationList[${s.index}].schoolName"
-														value="${edu.schoolName}"><br> <select
-														name="educationList[${s.index}].location">
-															<option value="서울"
-																${edu.location == '서울' ? 'selected' : ''}>서울</option>
-															<option value="경기"
-																${edu.location == '경기' ? 'selected' : ''}>경기</option>
-															<option value="지방"
-																${edu.location == '지방' ? 'selected' : ''}>지방</option>
-													</select></td>
+														value="${edu.endPeriod}" class="eduPeriod">
+														<br><span class="eduError" style="color:red; font-size:12px;"></span></td>
+													<td>
+													    <select name="educationList[${s.index}].division">
+													        <c:forEach var="divOption" items="${divisions}">
+													            <option value="${divOption}" ${edu.division == divOption ? 'selected' : ''}>${divOption}</option>
+													        </c:forEach>
+													    </select>
+													</td>
+													<td>
+													    <input type="text" name="educationList[${s.index}].schoolName" value="${edu.schoolName}">
+													    <br>
+													    <select name="educationList[${s.index}].location">
+													        <c:forEach var="loc" items="${locations}">
+													            <option value="${loc}" ${edu.location == loc ? 'selected' : ''}>${loc}</option>
+													        </c:forEach>
+													    </select>
+													</td>
 													<td><input type="text"
 														name="educationList[${s.index}].major"
 														value="${edu.major}"></td>
 													<td><input type="text"
 														name="educationList[${s.index}].grade"
-														value="${edu.grade}" class="gradeInput">/4.5</td>
+														value="${edu.grade}" class="gradeInput">/4.5
+														<br><span class="gradeError" style="color:red; font-size:12px;"></span></td>
 												</tr>
 											</c:otherwise>
 										</c:choose>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<tr>
-										<td><input type="checkbox"> <input type="hidden"
-											name="educationList[0].eduSeq" value="${edu.eduSeq}">
-										</td>
-										<td><input type="month"
-											name="educationList[0].startPeriod"
-											value="${edu.startPeriod}" class="eduPeriod"><br>~<br>
-											<input type="month" name="educationList[0].endPeriod"
-											value="${edu.endPeriod}" class="eduPeriod"></td>
-										<td><select name="educationList[0].division">
-												<option value="재학">재학</option>
-												<option value="중퇴">중퇴</option>
-												<option value="졸업">졸업</option>
-										</select></td>
-										<td><input type="text" name="educationList[0].schoolName"
-											value="${edu.schoolName}"><br> <select
-											name="educationList[0].location">
-												<option value="서울">서울</option>
-												<option value="경기">경기</option>
-												<option value="지방">지방</option>
-										</select></td>
-										<td><input type="text" name="educationList[0].major"
-											value="${edu.major}"></td>
-										<td><input type="number" name="educationList[0].grade"
-											value="${edu.grade}" class="gradeInput"
-											placeholder="예) 0 ~ 4.5 사이로 입력">/4.5</td>
-									</tr>
-								</c:otherwise>
+							    <tr>
+							        <td>
+							            <input type="checkbox">
+							            <input type="hidden" name="educationList[0].eduSeq" value="${edu.eduSeq}">
+							        </td>
+							        <td>
+							            <input type="month" name="educationList[0].startPeriod" value="${edu.startPeriod}" class="eduPeriod"> ~ 
+							            <input type="month" name="educationList[0].endPeriod" value="${edu.endPeriod}" class="eduPeriod">
+							            <br><span class="eduError" style="color:red; font-size:12px;"></span>
+							        </td>
+							        <td>
+							            <select name="educationList[0].division">
+							                <c:forEach var="divOption" items="${divisions}">
+							                    <option value="${divOption}" ${edu.division == divOption ? 'selected' : ''}>${divOption}</option>
+							                </c:forEach>
+							            </select>
+							        </td>
+							        <td>
+							            <input type="text" name="educationList[0].schoolName" value="${edu.schoolName}"><br>
+							            <select name="educationList[0].location">
+							                <c:forEach var="loc" items="${locations}">
+							                    <option value="${loc}" ${edu.location == loc ? 'selected' : ''}>${loc}</option>
+							                </c:forEach>
+							            </select>
+							        </td>
+							        <td><input type="text" name="educationList[0].major" value="${edu.major}"></td>
+							        <td>
+							            <input type="number" name="educationList[0].grade" value="${edu.grade}" class="gradeInput" placeholder="예) 0 ~ 4.5 사이로 입력">/4.5
+							            <br><span class="gradeError" style="color:red; font-size:12px;"></span>
+							        </td>
+							    </tr>
+							</c:otherwise>
 							</c:choose>
 						</tbody>
 					</table> <br>
@@ -805,10 +866,10 @@ $j(document).ready(function() {
 									<c:if test="${recruit.submit != 'Y'}">
 										<td></td>
 									</c:if>
-									<td>근무기간</td>
-									<td>회사명</td>
-									<td>부서/직급/직책</td>
-									<td>지역</td>
+									<td align="center">근무기간</td>
+									<td align="center">회사명</td>
+									<td align="center">부서/직급/직책</td>
+									<td align="center">지역</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -818,7 +879,7 @@ $j(document).ready(function() {
 											<c:choose>
 												<c:when test="${recruit.submit == 'Y'}">
 													<tr>
-														<td>${car.startPeriod}~<br> ${car.endPeriod}
+														<td>${car.startPeriod} ~ ${car.endPeriod}
 														</td>
 														<td>${car.compName}</td>
 														<td>${car.task}</td>
@@ -832,15 +893,16 @@ $j(document).ready(function() {
 															value="${car.carSeq}"></td>
 														<td><input name="careerList[${k.index}].startPeriod"
 															type="month" value="${car.startPeriod}" class="carPeriod">
-															~<br> <input name="careerList[${k.index}].endPeriod"
+															 ~ <input name="careerList[${k.index}].endPeriod"
 															type="month" value="${car.endPeriod}" class="carPeriod">
 															<br><span class="carError" style="color:red; font-size:12px;"></span></td>
 														<td><input name="careerList[${k.index}].compName"
 															type="text" value="${car.compName}"></td>
 														<td><input name="careerList[${k.index}].task"
 															type="text" class="taskInput" value="${car.task}"
-															placeholder="ex) 개발팀/대리/팀장"></td>
-														<td><input name="careerList[${k.index}].location"
+															placeholder="ex) 개발팀/대리/팀장">
+															<br><span class="taskError" style="color:red; font-size:12px;"></span></td>
+    													<td><input name="careerList[${k.index}].location"
 															type="text" value="${car.location}"></td>
 													</tr>
 												</c:otherwise>
@@ -852,15 +914,16 @@ $j(document).ready(function() {
 											<td><input type="checkbox"> <input type="hidden"
 												name="careerList[0].carSeq" value="${car.carSeq}"></td>
 											<td><input name="careerList[0].startPeriod" type="month"
-												class="carPeriod"> ~<br> <input
+												class="carPeriod"> ~ <input
 												name="careerList[0].endPeriod" type="month"
 												class="carPeriod">
 												<br><span class="carError" style="color:red; font-size:12px;"></span></td>
 											<td><input name="careerList[0].compName" type="text">
 											</td>
 											<td><input name="careerList[0].task" type="text"
-												class="taskInput" placeholder="예) 개발팀/대리/팀장"></td>
-											<td><input name="careerList[0].location" type="text">
+												class="taskInput" placeholder="예) 개발팀/대리/팀장">
+												<br><span class="taskError" style="color:red; font-size:12px;"></span></td>
+    										<td><input name="careerList[0].location" type="text">
 											</td>
 										</tr>
 									</c:otherwise>
@@ -881,9 +944,9 @@ $j(document).ready(function() {
 									<c:if test="${recruit.submit != 'Y'}">
 										<td></td>
 									</c:if>
-									<td>자격증명</td>
-									<td>취득일</td>
-									<td>발행처</td>
+									<td align="center">자격증명</td>
+									<td align="center">취득일</td>
+									<td align="center">발행처</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -908,7 +971,9 @@ $j(document).ready(function() {
 															type="text" value="${cer.qualifiName}"></td>
 														<td><input
 															name="certificateList[${w.index}].acquDate" type="month"
-															value="${cer.acquDate}" class="acquDate"></td>
+															value="${cer.acquDate}" class="acquDate">
+															<br><span class="acquError" style="color:red; font-size:12px;"></span>
+															</td>
 														<td><input
 															name="certificateList[${w.index}].organizeName"
 															type="text" value="${cer.organizeName}"></td>
@@ -924,17 +989,18 @@ $j(document).ready(function() {
 											<td><input name="certificateList[0].qualifiName"
 												type="text"></td>
 											<td><input name="certificateList[0].acquDate"
-												type="month" class="acquDate"></td>
+												type="month" class="acquDate">
+												<br><span class="acquError" style="color:red; font-size:12px;"></span></td>
 											<td><input name="certificateList[0].organizeName"
 												type="text"></td>
 										</tr>
 									</c:otherwise>
 								</c:choose>
 							</tbody>
-						</table>
-					</c:if> <br> <br>
-					<button type="button" id="saveBt">저장</button>
-					<button type="button" id="submitBt">제출</button> <br>
+					</table>
+				</c:if> <br> <br>
+			<button type="button" id="saveBt">저장</button>
+			<button type="button" id="submitBt">제출</button> <br>
 		</table>
 	</form>
 </body>

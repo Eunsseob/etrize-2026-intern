@@ -52,4 +52,10 @@ public class CareerDaoImpl implements CareerDao{
     public void insertCareer(CareerVo vo) throws Exception {
     	sqlSession.insert("career.insertCareer", vo);
     }
+
+	@Override
+	public void syncCareerList(String seq, List<CareerVo> careerList) {
+		// TODO Auto-generated method stub
+		
+	}
 }

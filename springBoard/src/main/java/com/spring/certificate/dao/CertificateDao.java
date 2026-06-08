@@ -17,4 +17,6 @@ public interface CertificateDao {
     public void deleteCertificateByCertSeq(CertificateVo vo) throws Exception;
     
     public void insertCertificate(CertificateVo vo) throws Exception;
+
+	public void syncCertificateList(String seq, List<CertificateVo> certificateList);
 }

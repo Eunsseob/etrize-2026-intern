@@ -53,6 +53,8 @@
 	</update>
 	
 	<delete id="deleteEducationByEduSeq" parameterType="com.spring.education.vo.EducationVo">
-	    DELETE FROM EDUCATION WHERE EDU_SEQ = #{eduSeq}
+	    DELETE 
+	    FROM EDUCATION 
+	    WHERE EDU_SEQ = #{eduSeq}
 	</delete>
 </mapper>

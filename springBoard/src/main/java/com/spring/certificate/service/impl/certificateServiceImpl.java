@@ -36,10 +36,10 @@ public class certificateServiceImpl implements certificateService{
 	
 	@Transactional(rollbackFor = Exception.class)
     public void syncCertificateList(String seq, List<CertificateVo> uiList) throws Exception {
-        // 1. 현재 DB에 저장된 전체 리스트를 가져옴
+        // 현재 DB에 저장된 전체 리스트를 가져옴
         List<CertificateVo> dbList = certificateDao.getCertificate(seq);
 
-        // 2. [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
+        // [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
         if (uiList != null) {
             for (CertificateVo uiCer : uiList) {
                 // 이름이 없으면 빈 행으로 간주하고 건너뜀
@@ -70,7 +70,7 @@ public class certificateServiceImpl implements certificateService{
             }
         }
 
-        // 3. [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
+        // [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
         if (dbList != null) {
             for (CertificateVo dbCer : dbList) {
                 boolean isExist = false;

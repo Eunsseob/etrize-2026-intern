@@ -2,6 +2,7 @@ package com.spring.recruit.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -87,7 +88,7 @@ public class RecruitController {
 	}
 	
 	@RequestMapping(value = "/userSignup.do", method = RequestMethod.POST)
-	public @ResponseBody String userSignup(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+	public @ResponseBody String userSignup(@RequestBody RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 		// 중복 체크
 	    if (recruitService.phoneCheck(recruitVo) > 0) {
 	        return "duplicated"; // 중복 시 가입 중단
@@ -156,13 +157,17 @@ public class RecruitController {
 	        }
 	    }
 	    int eduYears  = eduMonths / 23;
+	    String eduLevel;
 	    
 	    if (eduYears>=2) {
 	    	eduYears = 4;
+	    	eduLevel = "4년제 대학교";
 	    } else if (eduYears >= 1){
 	    	eduYears = 2;
+	    	eduLevel = "전문대학교";
 	    } else {
 	    	eduYears = 0;
+	    	eduLevel = "대학교";
 	    }
 
 	    for (EducationVo edu : educationList) {
@@ -179,12 +184,16 @@ public class RecruitController {
 	    int carYears  = carMonths / 12;
 	    int carMon    = carMonths % 12;
 	    
-	    model.addAttribute("eduPeriod", eduYears + "년");
+	    model.addAttribute("eduPeriod", eduLevel);
 	    model.addAttribute("carPeriod", carYears + "년 " + carMon + "개월");
 	    model.addAttribute("recruit", recruit);
 	    model.addAttribute("educationList", educationList);
 	    model.addAttribute("careerList", careerList);
 	    model.addAttribute("certificateList", certificateList);
+	    model.addAttribute("divisions", Arrays.asList("재학", "중퇴", "졸업"));
+	    model.addAttribute("locations", Arrays.asList("서울", "경기", "지방"));
+	    model.addAttribute("workTypes", Arrays.asList("정규직", "계약직", "인턴"));
+	    model.addAttribute("genders", Arrays.asList("남자", "여자"));
 		return "recruit/main";
     }
 	
@@ -194,7 +203,6 @@ public class RecruitController {
 	    String seq = (String) session.getAttribute("seq");
 	    recruitVo.setSeq(seq);
 
-	    // 이제 서비스 메서드 하나만 호출하면 안전합니다!
 	    recruitService.updateAllRecruitInfo(seq, recruitVo);
 	    
 	    return "success";

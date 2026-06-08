@@ -50,4 +50,10 @@ public class CertificatetDaoImpl implements CertificateDao{
     public void insertCertificate(CertificateVo vo) throws Exception {
     	sqlSession.insert("certificate.insertCertificate", vo);
     }
+
+	@Override
+	public void syncCertificateList(String seq, List<CertificateVo> certificateList) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -31,4 +31,6 @@ public interface recruitService {
 	
 	public void updateAllRecruitInfo(String seq, RecruitVo recruitVo) throws Exception;
 
+	public void syncRecruitInfo(String seq, RecruitVo uiRecruit) throws Exception;
+
 }

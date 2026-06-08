@@ -68,11 +68,31 @@ public class recruitServiceImpl implements recruitService {
 		recruitDao.submitRecruit(seq);
 	}
 
+	@Override
+	public void syncRecruitInfo(String seq, RecruitVo uiRecruit) throws Exception {
+	    RecruitVo dbRecruit = recruitDao.getRecruit(seq);
+	    if (dbRecruit == null) return;
 
+	    boolean changed = false;
+	    RecruitVo updateVo = new RecruitVo();
+	    updateVo.setSeq(seq);
+
+	    if (!uiRecruit.getName().equals(dbRecruit.getName())) { updateVo.setName(uiRecruit.getName()); changed = true; }
+	    if (!uiRecruit.getBirth().equals(dbRecruit.getBirth())) { updateVo.setBirth(uiRecruit.getBirth()); changed = true; }
+	    if (!uiRecruit.getGender().equals(dbRecruit.getGender())) { updateVo.setGender(uiRecruit.getGender()); changed = true; }
+	    if (!uiRecruit.getPhone().equals(dbRecruit.getPhone())) { updateVo.setPhone(uiRecruit.getPhone()); changed = true; }
+	    if (!uiRecruit.getEmail().equals(dbRecruit.getEmail())) { updateVo.setEmail(uiRecruit.getEmail()); changed = true; }
+	    if (!uiRecruit.getAddr().equals(dbRecruit.getAddr())) { updateVo.setAddr(uiRecruit.getAddr()); changed = true; }
+	    if (!uiRecruit.getLocation().equals(dbRecruit.getLocation())) { updateVo.setLocation(uiRecruit.getLocation()); changed = true; }
+	    if (!uiRecruit.getWorkType().equals(dbRecruit.getWorkType())) { updateVo.setWorkType(uiRecruit.getWorkType()); changed = true; }
+
+	    if (changed) recruitDao.updateRecruit(updateVo);
+	}
 	@Transactional(rollbackFor = Exception.class)
 	public void updateAllRecruitInfo(String seq, RecruitVo recruitVo) throws Exception {
 
-		recruitDao.updateRecruit(recruitVo);
+		// 변경된 필드만 업데이트
+	    syncRecruitInfo(seq, recruitVo);
 
 		// 교육 리스트
 		educationService.syncEducationList(seq, recruitVo.getEducationList());

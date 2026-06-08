@@ -49,4 +49,10 @@ public class EducationDaoImpl implements EducationDao{
     public void insertEducation(EducationVo vo) throws Exception {
     	sqlSession.insert("education.insertEducation", vo);
     }
+
+	@Override
+	public void syncEducationList(String seq, List<EducationVo> educationList) {
+		// TODO Auto-generated method stub
+		
+	}
 }

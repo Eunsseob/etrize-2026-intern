@@ -19,4 +19,6 @@ public interface CareerDao {
 
 	public void insertCareer(CareerVo vo) throws Exception;
 
+	public void syncCareerList(String seq, List<CareerVo> careerList);
+
 }

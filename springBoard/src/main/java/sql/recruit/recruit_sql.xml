@@ -45,16 +45,18 @@
       <!-- 이력서를 업데이트 시키기 위한 쿼리문 -->
       <update id="updateRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
 		    UPDATE RECRUIT
-		    SET NAME = #{name, jdbcType=VARCHAR},
-		        BIRTH = #{birth, jdbcType=VARCHAR},
-		        GENDER = #{gender, jdbcType=VARCHAR},
-		        PHONE = #{phone, jdbcType=VARCHAR},
-		        EMAIL = #{email, jdbcType=VARCHAR},
-		        ADDR = #{addr, jdbcType=VARCHAR},
-		        LOCATION = #{location, jdbcType=VARCHAR},
-		        WORK_TYPE = #{workType, jdbcType=VARCHAR},
+		    <set>
+		        <if test="name != null">NAME = #{name},</if>
+		        <if test="birth != null">BIRTH = #{birth},</if>
+		        <if test="gender != null">GENDER = #{gender},</if>
+		        <if test="phone != null">PHONE = #{phone},</if>
+		        <if test="email != null">EMAIL = #{email},</if>
+		        <if test="addr != null">ADDR = #{addr},</if>
+		        <if test="location != null">LOCATION = #{location},</if>
+		        <if test="workType != null">WORK_TYPE = #{workType},</if>
 		        SUBMIT = 'S'
-		    WHERE SEQ = #{seq, jdbcType=VARCHAR}
+		    </set>
+		    WHERE SEQ = #{seq}
 		</update>
 
 		<!-- 저장한 이력서 중 RECRUIT를 가져오는 쿼리문 -->

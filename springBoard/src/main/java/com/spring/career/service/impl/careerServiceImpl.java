@@ -37,10 +37,10 @@ public class careerServiceImpl implements careerService{
 	
 	@Transactional(rollbackFor = Exception.class)
     public void syncCareerList(String seq, List<CareerVo> uiList) throws Exception {
-        // 1. 현재 DB에 저장된 전체 리스트를 가져옴
+        // 현재 DB에 저장된 전체 리스트를 가져옴
         List<CareerVo> dbList = careerDao.getCareer(seq);
 
-        // 2. [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
+        // [INSERT & UPDATE] 화면(UI)에서 넘어온 리스트 처리
         if (uiList != null) {
             for (CareerVo uiCer : uiList) {
                 // 이름이 없으면 빈 행으로 간주하고 건너뜀
@@ -73,7 +73,7 @@ public class careerServiceImpl implements careerService{
             }
         }
 
-        // 3. [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
+        // [DELETE] DB에는 있는데 UI에는 없는 항목 삭제
         if (dbList != null) {
             for (CareerVo dbCer : dbList) {
                 boolean isExist = false;
