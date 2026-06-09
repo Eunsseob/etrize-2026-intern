@@ -61,12 +61,12 @@
 
 		<!-- 저장한 이력서 중 RECRUIT를 가져오는 쿼리문 -->
 		<select id="getRecruit" parameterType="String" resultMap="recruitVo">
-		    SELECT * FROM RECRUIT WHERE SEQ = #{seq}
+		    SELECT * FROM RECRUIT WHERE SEQ = #{seq, jdbcType=VARCHAR}
 		</select>
 		
 		<!-- 제출버튼을 위한 쿼리문 -->
 		<update id="submitRecruit" parameterType="String">
-		    UPDATE RECRUIT SET SUBMIT = 'Y' WHERE SEQ = #{seq}
+		    UPDATE RECRUIT SET SUBMIT = 'Y' WHERE SEQ = #{seq, jdbcType=VARCHAR}
 		</update>
 		
 		<select id="numberCheck" parameterType="String" resultType="int">

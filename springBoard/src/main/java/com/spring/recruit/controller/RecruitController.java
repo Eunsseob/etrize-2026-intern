@@ -69,7 +69,7 @@ public class RecruitController {
 	}
 	
 	@RequestMapping(value = "/userLogin.do", method = RequestMethod.POST)
-	public @ResponseBody String userLogin(RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+	public @ResponseBody String userLogin(@RequestBody RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 		System.out.println("들어옴");
 		
 		// DB에서 이름+전화번호로 조회
@@ -91,7 +91,7 @@ public class RecruitController {
 	public @ResponseBody String userSignup(@RequestBody RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 		// 중복 체크
 	    if (recruitService.phoneCheck(recruitVo) > 0) {
-	        return "duplicated"; // 중복 시 가입 중단
+	        return "PhoneNum Overlap"; // 중복 시 가입 중단
 	    }
 	    recruitService.userSignup(recruitVo);
 	    
@@ -138,7 +138,8 @@ public class RecruitController {
 	}
 
 	@RequestMapping(value = "/recruit/main.do", method = RequestMethod.GET)
-    public String main(Model model, HttpServletRequest request) throws Exception {
+	@ResponseBody
+    public Map<String, Object> main(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
 	    String seq = (String) session.getAttribute("seq");
 
@@ -184,17 +185,14 @@ public class RecruitController {
 	    int carYears  = carMonths / 12;
 	    int carMon    = carMonths % 12;
 	    
-	    model.addAttribute("eduPeriod", eduLevel);
-	    model.addAttribute("carPeriod", carYears + "년 " + carMon + "개월");
-	    model.addAttribute("recruit", recruit);
-	    model.addAttribute("educationList", educationList);
-	    model.addAttribute("careerList", careerList);
-	    model.addAttribute("certificateList", certificateList);
-	    model.addAttribute("divisions", Arrays.asList("재학", "중퇴", "졸업"));
-	    model.addAttribute("locations", Arrays.asList("서울", "경기", "지방"));
-	    model.addAttribute("workTypes", Arrays.asList("정규직", "계약직", "인턴"));
-	    model.addAttribute("genders", Arrays.asList("남자", "여자"));
-		return "recruit/main";
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("recruit", recruit);
+	    result.put("educationList", educationList);
+	    result.put("careerList", careerList);
+	    result.put("certificateList", certificateList);
+
+	    
+		return result;
     }
 	
 	@RequestMapping(value = "/recruit/userSignup.do", method = RequestMethod.POST)
@@ -206,5 +204,17 @@ public class RecruitController {
 	    recruitService.updateAllRecruitInfo(seq, recruitVo);
 	    
 	    return "success";
+	}
+	
+	// 백엔드에서 세션을 받아오는 과정
+	@RequestMapping(value = "/getSession.do", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getSession(HttpServletRequest request) throws Exception {
+	    HttpSession session = request.getSession();
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("name", session.getAttribute("name"));
+	    result.put("phone", session.getAttribute("phone"));
+	    result.put("seq", session.getAttribute("seq"));
+	    return result;
 	}
 }
