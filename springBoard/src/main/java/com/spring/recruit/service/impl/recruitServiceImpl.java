@@ -64,8 +64,8 @@ public class recruitServiceImpl implements recruitService {
 	}
 
 	@Override
-	public void submitRecruit(String seq) throws Exception {
-		recruitDao.submitRecruit(seq);
+	public int submitRecruit(RecruitVo recruitVo) throws Exception {
+		return recruitDao.submitRecruit(recruitVo);
 	}
 
 	@Override

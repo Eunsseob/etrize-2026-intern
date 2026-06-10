@@ -84,6 +84,7 @@ public class RecruitController {
         session.setAttribute("name", existUser.getName());
         session.setAttribute("phone", existUser.getPhone());
         session.setAttribute("seq", existUser.getSeq());
+        session.setAttribute("submit", existUser.getSubmit());
         return "success";
 	}
 	
@@ -133,8 +134,17 @@ public class RecruitController {
 	// 제출 처리
 	@RequestMapping("/recruit/submitRecruit.do")
 	@ResponseBody
-	public void submitRecruit(String seq) throws Exception {
-	    recruitService.submitRecruit(seq);
+	public String submitRecruit(@RequestBody RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+	    String seq = (String) session.getAttribute("seq");
+	    System.out.println("seq: " + seq);
+	    recruitVo.setSeq(seq);
+
+	    recruitService.updateAllRecruitInfo(seq, recruitVo);
+	    
+	    recruitService.submitRecruit(recruitVo);
+	    
+	    return "submit_success";
 	}
 
 	@RequestMapping(value = "/recruit/main.do", method = RequestMethod.GET)
@@ -196,9 +206,10 @@ public class RecruitController {
     }
 	
 	@RequestMapping(value = "/recruit/userSignup.do", method = RequestMethod.POST)
-	public @ResponseBody String userSignup1(@ModelAttribute RecruitVo recruitVo, HttpServletRequest request) throws Exception {
+	public @ResponseBody String userSignup1(@RequestBody RecruitVo recruitVo, HttpServletRequest request) throws Exception {
 	    HttpSession session = request.getSession();
 	    String seq = (String) session.getAttribute("seq");
+	    System.out.println("seq: " + seq);
 	    recruitVo.setSeq(seq);
 
 	    recruitService.updateAllRecruitInfo(seq, recruitVo);
@@ -215,6 +226,7 @@ public class RecruitController {
 	    result.put("name", session.getAttribute("name"));
 	    result.put("phone", session.getAttribute("phone"));
 	    result.put("seq", session.getAttribute("seq"));
+	    result.put("submit", session.getAttribute("submit"));
 	    return result;
 	}
 }

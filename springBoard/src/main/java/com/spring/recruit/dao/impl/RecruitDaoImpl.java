@@ -46,8 +46,8 @@ public class RecruitDaoImpl implements RecruitDao{
 	}
 	
 	@Override
-	public void submitRecruit(String seq) throws Exception {
-	    sqlSession.update("recruit.submitRecruit", seq);
+	public int submitRecruit(RecruitVo recruitVo) throws Exception {
+	    return sqlSession.update("recruit.submitRecruit", recruitVo);
 	}
 	
 	// 전화번호 중복 검증하기

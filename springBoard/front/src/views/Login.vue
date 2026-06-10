@@ -64,7 +64,7 @@ const signup = async () => {
         <td>
           <input
             type="text"
-            ref="nameref"
+            ref="nameRef"
             v-model="name"
             placeholder="이름을 입력하세요"
           />
@@ -77,7 +77,7 @@ const signup = async () => {
         <td>
           <input
             type="tel"
-            ref="phoneref"
+            ref="phoneRef"
             name="phone"
             v-model="phone"
             placeholder="휴대폰번호를 입력하세요"

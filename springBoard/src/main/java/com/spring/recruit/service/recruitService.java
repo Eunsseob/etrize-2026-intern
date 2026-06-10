@@ -24,7 +24,7 @@ public interface recruitService {
 	public RecruitVo getRecruit(String seq) throws Exception;
 
 	// 이력서 제출 메서드
-	public void submitRecruit(String seq) throws Exception;
+	public int submitRecruit(RecruitVo recruitVo) throws Exception;
 
 	// 전화번호 검증 로직
 	public int phoneCheck(RecruitVo recruitVo) throws Exception;

@@ -5,5 +5,4 @@ import api from "@/lib/axios";
 
 <template>
   <RouterView />
-  <div>테스트중</div>
 </template>

@@ -34,7 +34,7 @@
       <!-- 유저를 로그인 시키기 위한 쿼리문 -->
       <select id="userLogin1" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
       		SELECT
-	  	  	   NAME, PHONE, SEQ
+	  	  	   NAME, PHONE, SEQ, SUBMIT
 	  	  FROM
 	     	   RECRUIT
 	 	   WHERE

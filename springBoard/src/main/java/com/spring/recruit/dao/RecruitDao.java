@@ -17,7 +17,7 @@ public interface RecruitDao {
 	
 	public RecruitVo getRecruit(String seq) throws Exception;
 
-	public void submitRecruit(String seq) throws Exception;
+	public int submitRecruit(RecruitVo recruitVo) throws Exception;
 
 	public int phoneCheck(RecruitVo recruitVo) throws Exception;
 
