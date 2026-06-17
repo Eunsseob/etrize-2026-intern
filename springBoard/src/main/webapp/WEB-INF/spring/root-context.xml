@@ -11,11 +11,11 @@
 	<context:component-scan base-package="com.spring.code" />
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-	        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-	        <property name="url" value="jdbc:oracle:thin:@localhost:1521/free" />
-	        <property name="username" value="SYSTEM" />
-	        <property name="password" value="12341234" />
-	</bean> 
+	    <property name="driverClassName" value="org.postgresql.Driver" />
+	    <property name="url" value="jdbc:postgresql://db.aqufohzuzxcknqnmvqyz.supabase.co:5432/postgres" />
+	    <property name="username" value="postgres" />
+	    <property name="password" value="Fkdlajwm82@" />
+	</bean>
 	
 	<!-- 트랜잭션 -->
 	<bean id="transactionManager"
