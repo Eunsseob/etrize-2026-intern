@@ -7,9 +7,9 @@ import com.spring.user.vo.UserVo;
 
 public interface userService {
 
-	public String userLogin(UserVo userVo) throws Exception;
+	public UserVo userLogin(UserVo userVo) throws Exception;
 
-	public int userSignup(UserVo userVo) throws Exception;
+	public void userSignup(UserVo userVo) throws Exception;
 
 	public int userIdcheck(String userId) throws Exception;
 }

@@ -15,14 +15,14 @@ public class userServiceImpl implements userService{
 	
 	// 로그인 하기
 	@Override
-	public String userLogin(UserVo userVo) throws Exception {
+	public UserVo userLogin(UserVo userVo) throws Exception {
 	    return userDao.userLogin(userVo);  // 수정된 데이터 넘기기
 	}
 	
 	// 회원 가입하기
 	@Override
-	public int userSignup(UserVo userVo) throws Exception {
-		return userDao.userSignup(userVo);  // 수정된 데이터 넘기기
+	public void userSignup(UserVo userVo) throws Exception {
+		userDao.userSignup(userVo);  // 수정된 데이터 넘기기
 	}
 	
 	// 아이디 조회

@@ -17,20 +17,15 @@ public class UserDaoImpl implements UserDao{
 	
 	// 로그인 메소드
 	@Override
-	public String userLogin(UserVo userVo) throws Exception {
-	   
-	    UserVo result = sqlSession.selectOne("user.userLogin", userVo);
-	    if(result != null) {
-	        return result.getUserName();
-	    }
-	    return null;
+	public UserVo userLogin(UserVo userVo) throws Exception {
+	    return sqlSession.selectOne("user.userLogin", userVo);
 	}
 	
 	// 회원가입 메소드
 		@Override
-		public int userSignup(UserVo userVo) throws Exception {
+		public void userSignup(UserVo userVo) throws Exception {
 		   
-			return sqlSession.insert("user.userInsert", userVo);
+			sqlSession.insert("user.userSignup", userVo);
 		}
 		
 		// 아이디 체크 메소드
