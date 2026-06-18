@@ -15,21 +15,7 @@
 	    <result property="submit"   column="SUBMIT"/>
 	</resultMap>
     
-    <!-- 유저를 회원가입 시키기위한 쿼리문 -->
-    <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
-        INSERT INTO 
-        	RECRUIT
-        	(SEQ
-        	,NAME
-        	,PHONE)
-        VALUES
-	        (
-	        RECRUIT_SEQ.NEXTVAL
-	        ,#{name, jdbcType=VARCHAR}
-	        ,#{phone, jdbcType=VARCHAR}
 
-	        )
-      </insert>
       
       <!-- 유저를 로그인 시키기 위한 쿼리문 -->
       <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
