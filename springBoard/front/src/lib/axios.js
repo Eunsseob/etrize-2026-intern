@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8081",
+  baseURL: "https://etrize-2026-intern-1.onrender.com/",
   withCredentials: true, // 쿠키 사용 시 필요
 });
 AbortSignal;
