@@ -15,14 +15,23 @@
 	    <result property="submit"   column="SUBMIT"/>
 	</resultMap>
     
-
-      
-      <!-- 유저를 로그인 시키기 위한 쿼리문 -->
-      <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
+    <!-- 유저를 회원가입 시키기위한 쿼리문 -->
+    <insert id="userSignup1" parameterType="com.spring.recruit.vo.RecruitVo">
 	    INSERT INTO RECRUIT (NAME, PHONE)
 	    VALUES (#{name, jdbcType=VARCHAR}, #{phone, jdbcType=VARCHAR})
 	</insert>
-	      
+      
+      <!-- 유저를 로그인 시키기 위한 쿼리문 -->
+      <select id="userLogin1" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
+      		SELECT
+	  	  	   NAME, PHONE, SEQ, SUBMIT
+	  	  FROM
+	     	   RECRUIT
+	 	   WHERE
+	  	       NAME = #{name, jdbcType=VARCHAR}
+	 		   AND PHONE = #{phone, jdbcType=VARCHAR}
+      </select>
+      
       <!-- 이력서를 업데이트 시키기 위한 쿼리문 -->
       <update id="updateRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
 		    UPDATE RECRUIT
